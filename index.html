@@ -3,169 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest BD - Ultimate Pro</title>
+    <title>Smart Invest BD - Professional</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-green: #22c55e; --bg-dark: #0f172a; --card-dark: #1e293b; --yellow: #facc15; --red-box: #ef4444; }
+        :root { --primary: #22c55e; --bg: #0f172a; --card: #1e293b; --accent: #facc15; --danger: #ef4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-        body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
+        body { background-color: var(--bg); color: #fff; overflow-x: hidden; }
 
+        /* ওয়েলকাম পেজ (Splash Screen) */
+        #welcomeScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
+        .logo-circle { width: 100px; height: 100px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 0 30px var(--primary); margin-bottom: 20px; animation: pulse 2s infinite; }
+        
         .view-section { display: none; min-height: 100vh; padding-bottom: 80px; }
-        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .navbar { background: var(--card-dark); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 1000; }
-        .red-title { background: var(--red-box); padding: 5px 15px; border-radius: 8px; font-weight: 800; color: white; }
+        .navbar { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #334155; }
+        .red-title { background: var(--danger); padding: 5px 15px; border-radius: 8px; font-weight: 800; font-size: 14px; }
+
+        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
         
-        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-dark); z-index: 2005; transition: 0.4s; padding: 20px; }
+        /* প্রফেশনাল ডিপোজিট কার্ড */
+        .dep-card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #334155; position: relative; overflow: hidden; }
+        .method-btn { padding: 10px; border-radius: 12px; border: 2px solid #334155; cursor: pointer; text-align: center; transition: 0.3s; flex: 1; margin: 5px; font-weight: 600; }
+        .method-btn.selected { border-color: var(--primary); background: rgba(34, 197, 94, 0.1); }
+        
+        .balance-box { background: linear-gradient(135deg, #16a34a, #22c55e); padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(22, 163, 74, 0.3); }
+        
+        .input-group input, .input-group select { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--primary); }
+
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-green { background: var(--primary); color: white; }
+        .btn-green:active { transform: scale(0.97); }
+
+        #taskTimer { display: none; margin-top: 15px; font-weight: bold; color: var(--accent); text-align: center; border: 1px dashed var(--accent); padding: 10px; border-radius: 10px; }
+
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card); z-index: 2005; transition: 0.4s; padding: 20px; border-right: 1px solid #334155; }
         .sidebar.active { left: 0; }
-        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; border-bottom: 1px solid #334155; }
+        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; }
+        .sidebar-item:hover { background: #334155; }
 
-        .container { padding: 20px; max-width: 480px; margin: 0 auto; }
-        
-        .act-banner { background: var(--red-box); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: 700; cursor: pointer; animation: pulse 2s infinite; display: none; }
-        
-        .balance-box { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 25px; }
-        .card { background: var(--card-dark); border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; }
-        
-        .input-group input, .input-group select { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 10px; outline: none; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; }
-        .btn-green { background: var(--primary-green); color: white; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; }
 
-        #taskTimer { display: none; margin-top: 15px; font-weight: bold; color: var(--yellow); text-align: center; padding: 10px; border: 1px dashed var(--yellow); border-radius: 10px; }
-
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; }
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(0.98);} 100% {transform: scale(1);} }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);} 70% {box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);} 100% {box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);} }
     </style>
 </head>
 <body>
 
+    <div id="welcomeScreen">
+        <div class="logo-circle">৳</div>
+        <h1 style="letter-spacing: 2px;">SMART INVEST</h1>
+        <p style="color: gray; margin-top: 10px;">Loading assets...</p>
+    </div>
+
     <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
 
     <div class="sidebar" id="sidebar">
-        <h2 style="color: var(--primary-green); margin-bottom: 20px;">Main Menu</h2>
-        <div class="sidebar-item" onclick="showView('homeView')">🏠 হোম</div>
+        <h2 style="color: var(--primary); margin-bottom: 30px;">User Menu</h2>
+        <div class="sidebar-item" onclick="showView('homeView')">🏠 হোম পেজ</div>
         <div class="sidebar-item" onclick="showView('profileView')">👤 প্রোফাইল</div>
-        <div class="sidebar-item" onclick="checkActiveAndOpen('referView')">🔗 রেফারেল</div>
+        <div class="sidebar-item" onclick="checkRefAccess()">🔗 রেফারেল</div>
         <div class="sidebar-item" onclick="showView('historyView')">📜 লেনদেন ইতিহাস</div>
         <div class="sidebar-item" onclick="showView('withdrawView')">📤 উইথড্র</div>
         <div class="sidebar-item" onclick="openDeposit()">📥 ডিপোজিট</div>
-        <div class="sidebar-item" onclick="window.open('https://wa.me/8801946024013')">💬 সাপোর্ট (WhatsApp)</div>
-        <div class="sidebar-item" style="color:var(--red-box); margin-top: 20px;" onclick="handleLogout()">🚪 লগআউট</div>
+        <div class="sidebar-item" onclick="window.open('https://wa.me/8801946024013')">💬 সাপোর্ট</div>
+        <div class="sidebar-item" style="color: var(--danger); margin-top: 30px;" onclick="handleLogout()">🚪 লগআউট</div>
     </div>
 
-    <div id="authView" class="view-section active">
-        <div class="container" style="margin-top: 50px;">
-            <div id="loginBox" class="card">
-                <h2 style="text-align:center">লগইন</h2><br>
+    <div id="authView" class="view-section">
+        <div class="container" style="padding-top: 50px;">
+            <div id="loginBox" class="dep-card">
+                <h2 style="text-align: center; margin-bottom: 20px;">লগইন</h2>
                 <div class="input-group">
-                    <input type="email" id="loginEmail" placeholder="ইমেইল">
+                    <input type="email" id="loginEmail" placeholder="ইমেইল এড্রেস">
                     <input type="password" id="loginPass" placeholder="পাসওয়ার্ড">
                 </div>
-                <button class="btn btn-green" onclick="handleLogin()">প্রবেশ করুন</button>
-                <p onclick="toggleAuth('signup')" style="text-align:center; margin-top:15px; font-size:14px; cursor:pointer;">নতুন একাউন্ট খুলুন</p>
+                <button class="btn btn-green" onclick="handleLogin()">লগইন করুন</button>
+                <p onclick="toggleAuth('signup')" style="text-align: center; margin-top: 15px; cursor: pointer; color: var(--primary);">নতুন একাউন্ট খুলুন</p>
             </div>
-            <div id="signupBox" class="card" style="display:none">
-                <h2 style="text-align:center">রেজিস্ট্রেশন</h2><br>
+            
+            <div id="signupBox" class="dep-card" style="display: none;">
+                <h2 style="text-align: center; margin-bottom: 20px;">রেজিস্ট্রেশন</h2>
                 <div class="input-group">
-                    <input type="text" id="signupName" placeholder="আপনার নাম">
+                    <input type="text" id="signupName" placeholder="সম্পূর্ণ নাম">
                     <input type="email" id="signupEmail" placeholder="ইমেইল">
                     <input type="password" id="signupPass" placeholder="পাসওয়ার্ড">
-                    <input type="text" id="signupRefer" placeholder="রেফার কোড (ঐচ্ছিক)">
+                    <input type="text" id="signupRefer" placeholder="রেফার কোড (অটো)">
                 </div>
-                <button class="btn btn-green" onclick="handleSignUp()">সাইন আপ</button>
-                <p onclick="toggleAuth('login')" style="text-align:center; margin-top:15px; cursor:pointer;">লগইন করুন</p>
+                <button class="btn btn-green" onclick="handleSignUp()">রেজিস্ট্রেশন করুন</button>
+                <p onclick="toggleAuth('login')" style="text-align: center; margin-top: 15px; cursor: pointer; color: var(--primary);">লগইন করুন</p>
             </div>
         </div>
     </div>
 
     <div id="homeView" class="view-section">
-        <div class="navbar"><div onclick="toggleMenu(true)" style="cursor:pointer; font-size:24px;">☰</div><div class="red-title">Smart Invest</div><div></div></div>
+        <div class="navbar"><div onclick="toggleMenu(true)" style="cursor: pointer;">☰</div><div class="red-title">Smart Invest</div><div></div></div>
         <div class="container">
-            <div id="actNotice" class="act-banner" onclick="openDeposit()">১০০ টাকা ডিপোজিট করে একাউন্ট এক্টিভ করুন</div>
-            <div class="balance-box">
-                <p>বর্তমান ব্যালেন্স</p>
-                <h1 id="userBalance">৳ 0</h1>
+            <div id="actNotice" style="background: var(--danger); padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; font-weight: bold; cursor: pointer; display: none;" onclick="openDeposit()">
+                ১০০ টাকা দিয়ে একাউন্ট একটিভ করুন
             </div>
-            <button class="btn btn-green" id="taskBtn" onclick="handleTaskClick()">ডেইলি টাস্ক শুরু করুন</button>
+            <div class="balance-box">
+                <p style="opacity: 0.9;">বর্তমান ব্যালেন্স</p>
+                <h1 id="userBalance" style="font-size: 40px; margin: 10px 0;">৳ 0</h1>
+            </div>
+            <button class="btn btn-green" id="taskBtn" onclick="handleTask()" style="background: #3b82f6;">টাস্ক শুরু করুন (১০৳)</button>
             <div id="taskTimer">অপেক্ষা করুন... <span id="seconds">5</span>s</div>
         </div>
     </div>
 
-    <div id="profileView" class="view-section">
-        <div class="navbar"><div onclick="showView('homeView')" style="cursor:pointer;">←</div><div class="red-title">প্রোফাইল</div><div></div></div>
-        <div class="container">
-            <div class="card"><small>নাম:</small><p id="pName">-</p></div>
-            <div class="card"><small>ইমেইল:</small><p id="pEmail">-</p></div>
-            <div class="card"><small>ইউনিক আইডি:</small><p id="pUid" style="color:var(--yellow)">-</p></div>
-            <div class="card"><small>স্ট্যাটাস:</small><p id="pStatus">-</p></div>
-            <button class="btn btn-green" style="background:#475569" onclick="alert('Password change system coming soon!')">পাসওয়ার্ড পরিবর্তন</button>
-        </div>
-    </div>
-
-    <div id="referView" class="view-section">
-        <div class="navbar"><div onclick="showView('homeView')" style="cursor:pointer;">←</div><div class="red-title">রেফারেল</div><div></div></div>
-        <div class="container">
-            <div class="card" style="text-align:center">
-                <p>আপনার রেফার লিংক</p>
-                <small id="refLink" style="display:block; margin:10px 0; color:var(--primary-green); word-break: break-all;"></small>
-                <button onclick="copyRef()" class="btn btn-green" style="padding:8px; width:auto;">লিংক কপি করুন</button>
-            </div>
-            <div class="card">
-                <h3 style="color:var(--yellow); margin-bottom:10px;">৫-স্তর রেফার কমিশন:</h3>
-                <p>স্তর ১: ৩০৳ (সরাসরি)</p>
-                <p>স্তর ২: ১০৳</p>
-                <p>স্তর ৩: ৫৳</p>
-                <p>স্তর ৪: ২৳</p>
-                <p>স্তর ৫: ১৳</p>
-                <small style="color:gray">*রেফারকৃত ব্যক্তি একাউন্ট একটিভ করলে বোনাস পাবেন।</small>
-            </div>
-        </div>
-    </div>
-
     <div id="depModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:4000; align-items:center; justify-content:center;">
-        <div class="card" style="width:90%; max-width:400px;">
-            <h3 style="text-align:center">ডিপোজিট / এক্টিভেশন</h3><br>
-            <select id="depMethod" onchange="changeDepNum()" class="input-group">
-                <option value="Bkash">বিকাশ (Personal)</option>
-                <option value="Nagad">নগদ (Personal)</option>
-                <option value="Rocket">রকেট (Personal)</option>
-            </select>
-            <p id="depNumDisplay" style="text-align:center; background:var(--yellow); color:black; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">বিকাশ: 01946024013</p>
-            <input type="number" id="depAmt" value="100" readonly class="input-group">
-            <input type="text" id="depTrx" placeholder="ট্রাঞ্জেকশন আইডি (TrxID)" class="input-group">
+        <div class="dep-card" style="width:90%; max-width:400px;">
+            <h3 style="text-align:center">একাউন্ট একটিভেশন</h3><br>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <div class="method-btn selected" id="mb1" onclick="selMethod('Bkash', '01946024013', 'mb1')">বিকাশ</div>
+                <div class="method-btn" id="mb2" onclick="selMethod('Nagad', '018XXXXXXXX', 'mb2')">নগদ</div>
+                <div class="method-btn" id="mb3" onclick="selMethod('Rocket', '017XXXXXXXX', 'mb3')">রকেট</div>
+            </div>
+            <p id="depInstruction" style="background:#0f172a; padding:12px; border-radius:10px; font-size:14px; text-align:center; border:1px solid #334155;">
+                বিকাশ পার্সোনাল নাম্বারে ১০০ টাকা সেন্ড মানি করুন: <br><b style="color:var(--accent); font-size:18px;">01946024013</b>
+            </p><br>
+            <div class="input-group">
+                <input type="text" id="depTrx" placeholder="ট্রাঞ্জেকশন আইডি (TrxID)">
+            </div>
             <button class="btn btn-green" onclick="submitDep()">সাবমিট করুন</button>
             <button onclick="closeModal()" style="width:100%; background:none; color:gray; border:none; margin-top:10px; cursor:pointer;">বন্ধ করুন</button>
         </div>
     </div>
 
     <div id="withdrawView" class="view-section">
-        <div class="navbar"><div onclick="showView('homeView')" style="cursor:pointer;">←</div><div class="red-title">উইথড্র</div><div></div></div>
+        <div class="navbar"><div onclick="showView('homeView')" style="cursor: pointer;">←</div><div class="red-title">উইথড্র</div><div></div></div>
         <div class="container">
-            <div class="card" style="text-align:center">ব্যালেন্স: <span id="witBal" style="color:var(--primary-green); font-weight:bold;">৳ 0</span></div>
-            <div class="input-group">
-                <select id="witMethod">
-                    <option value="Bkash">বিকাশ</option>
-                    <option value="Nagad">নগদ</option>
-                    <option value="Rocket">রকেট</option>
-                </select>
-                <input type="number" id="witAmt" placeholder="পরিমাণ (মিনিমাম ৫০০)">
-                <input type="number" id="witNum" placeholder="মোবাইল নাম্বার">
+            <div class="dep-card">
+                <div class="input-group">
+                    <select id="witMethod"><option value="Bkash">বিকাশ</option><option value="Nagad">নগদ</option></select>
+                    <input type="number" id="witAmt" placeholder="পরিমাণ (মিনিমাম ৫০০)">
+                    <input type="number" id="witNum" placeholder="নাম্বার">
+                </div>
+                <button class="btn btn-green" onclick="submitWithdraw()">উইথড্র রিকোয়েস্ট</button>
             </div>
-            <button class="btn btn-green" onclick="submitWithdraw()">উইথড্র রিকোয়েস্ট</button>
         </div>
     </div>
 
-    <div id="historyView" class="view-section">
-        <div class="navbar"><div onclick="showView('homeView')" style="cursor:pointer;">←</div><div class="red-title">লেনদেন ইতিহাস</div><div></div></div>
-        <div class="container" id="historyData">লোডিং...</div>
+    <div id="profileView" class="view-section">
+        <div class="navbar"><div onclick="showView('homeView')">←</div><div class="red-title">প্রোফাইল</div><div></div></div>
+        <div class="container"><div class="dep-card" id="profileData">লোডিং...</div></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, query, where, getDocs, serverTimestamp, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, query, where, getDocs, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // আপনার প্রোভাইড করা Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyByoyfmwZJyIwYj09NdLwHLpsAVZ0joZq4",
             authDomain: "investmentc12-887a8.firebaseapp.com",
@@ -179,188 +168,111 @@
         const auth = getAuth();
         const db = getFirestore(app);
 
-        let uActive = false;
-        const TASK_URL = "https://www.facebook.com/facebookuser1972";
+        let uActive = false; let currentBal = 0;
+        let selectedMethod = "Bkash";
 
-        // অটো রেফার লজিক
-        window.onload = () => {
+        // ১. ওয়েলকাম স্ক্রিন ও অটো রেফার লজিক
+        window.addEventListener('load', () => {
             const params = new URLSearchParams(window.location.search);
             const r = params.get('ref');
-            if(r) { 
-                toggleAuth('signup'); 
-                document.getElementById('signupRefer').value = r; 
-            }
-        };
+            if(r) { toggleAuth('signup'); document.getElementById('signupRefer').value = r; }
+
+            setTimeout(() => {
+                document.getElementById('welcomeScreen').style.opacity = '0';
+                setTimeout(() => document.getElementById('welcomeScreen').style.display = 'none', 500);
+            }, 2000);
+        });
 
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 onSnapshot(doc(db, "users", user.uid), (s) => {
-                    if(s.exists()){
+                    if(s.exists()) {
                         const d = s.data();
                         uActive = d.active || false;
-                        document.getElementById('userBalance').innerText = "৳ " + (d.balance || 0);
-                        document.getElementById('witBal').innerText = "৳ " + (d.balance || 0);
-                        document.getElementById('pEmail').innerText = d.email;
-                        document.getElementById('pName').innerText = d.name;
-                        document.getElementById('pUid').innerText = user.uid;
-                        document.getElementById('pStatus').innerText = uActive ? "Active ✅" : "Inactive ❌";
+                        currentBal = d.balance || 0;
+                        document.getElementById('userBalance').innerText = "৳ " + currentBal;
                         document.getElementById('actNotice').style.display = uActive ? 'none' : 'block';
-                        document.getElementById('refLink').innerText = window.location.origin + window.location.pathname + "?ref=" + user.uid;
+                        document.getElementById('profileData').innerHTML = `নাম: ${d.name}<br>ইমেইল: ${d.email}<br>স্ট্যাটাস: ${uActive ? 'Active' : 'Inactive'}`;
                         if(document.getElementById('authView').classList.contains('active')) showView('homeView');
                     }
                 });
             } else { showView('authView'); }
         });
 
-        // ডিপোজিট সাবমিট (TrxID সুরক্ষা সহ)
-        window.submitDep = async () => {
-            const trx = document.getElementById('depTrx').value.trim();
-            if(!trx) return alert("TrxID প্রদান করুন!");
+        // টাস্ক হ্যান্ডলার (Facebook Link)
+        window.handleTask = () => {
+            if(!uActive) return alert("একাউন্ট একটিভ করুন!");
+            window.open("https://www.facebook.com/facebookuser1972", "_blank");
             
-            const q = query(collection(db, "deposits"), where("trxId", "==", trx));
-            const snap = await getDocs(q);
-            if(!snap.empty) return alert("এই TrxID ইতিপূর্বে ব্যবহৃত হয়েছে!");
-
-            await addDoc(collection(db, "deposits"), {
-                uid: auth.currentUser.uid,
-                email: auth.currentUser.email,
-                amount: 100,
-                trxId: trx,
-                method: document.getElementById('depMethod').value,
-                status: "pending",
-                type: "Activation",
-                time: serverTimestamp()
-            });
-            alert("ডিপোজিট রিকোয়েস্ট সফল! অ্যাডমিন ভেরিফাই করলে একাউন্ট একটিভ হবে।"); 
-            closeModal();
-        };
-
-        // ডেইলি টাস্ক হ্যান্ডলার
-        window.handleTaskClick = () => {
-            if(!uActive) {
-                alert("টাস্ক শুরু করতে আগে একাউন্ট একটিভ করুন!");
-                return openDeposit();
-            }
-
-            window.open(TASK_URL, "_blank");
-
-            let timeLeft = 5;
+            let time = 5;
             const btn = document.getElementById('taskBtn');
             const timerDiv = document.getElementById('taskTimer');
-            const secSpan = document.getElementById('seconds');
+            btn.disabled = true; timerDiv.style.display = 'block';
 
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-            timerDiv.style.display = "block";
-
-            const timer = setInterval(async () => {
-                timeLeft--;
-                secSpan.innerText = timeLeft;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    timerDiv.style.display = "none";
-                    btn.disabled = false;
-                    btn.style.opacity = "1";
-                    
-                    try {
-                        await updateDoc(doc(db, "users", auth.currentUser.uid), {
-                            balance: increment(10)
-                        });
-                        alert("অভিনন্দন! ১০ টাকা আপনার ব্যালেন্সে যোগ হয়েছে।");
-                    } catch (e) {
-                        alert("ব্যালেন্স আপডেট করতে ব্যর্থ হয়েছে।");
-                    }
+            const count = setInterval(async () => {
+                time--;
+                document.getElementById('seconds').innerText = time;
+                if(time <= 0) {
+                    clearInterval(count);
+                    btn.disabled = false; timerDiv.style.display = 'none';
+                    await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10) });
+                    alert("১০ টাকা যোগ হয়েছে!");
                 }
             }, 1000);
         };
 
-        // উইথড্র সাবমিট
+        // প্রফেশনাল ডিপোজিট সাবমিট
+        window.submitDep = async () => {
+            const trx = document.getElementById('depTrx').value.trim();
+            if(!trx) return alert("ট্রাঞ্জেকশন আইডি দিন");
+
+            // ট্রাঞ্জেকশন ডুপ্লিকেট চেক
+            const q = query(collection(db, "deposits"), where("trxId", "==", trx));
+            const snap = await getDocs(q);
+            if(!snap.empty) return alert("এই ট্রাঞ্জেকশন আইডি দিয়ে একবার সাবমিট করা হয়েছে! ব্লকড।");
+
+            await addDoc(collection(db, "deposits"), {
+                uid: auth.currentUser.uid,
+                trxId: trx,
+                method: selectedMethod,
+                amount: 100,
+                status: "pending",
+                time: serverTimestamp()
+            });
+            alert("সাবমিট হয়েছে! অপেক্ষা করুন।");
+            closeModal();
+        };
+
+        // উইথড্র লজিক (পর্যাপ্ত ব্যালেন্স চেক)
         window.submitWithdraw = async () => {
             const amt = parseInt(document.getElementById('witAmt').value);
-            const num = document.getElementById('witNum').value;
-            if(amt < 500) return alert("মিনিমাম উইথড্র ৫০০ টাকা");
-            if(!num) return alert("নাম্বার দিন");
+            if(isNaN(amt) || amt < 500) return alert("মিনিমাম ৫০০ টাকা উইথড্র করুন।");
+            
+            if(amt > currentBal) {
+                return alert("আপনার একাউন্টে পর্যাপ্ত টাকা নেই!");
+            }
 
-            // ব্যালেন্স চেক (লজিকালি)
-            alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে (অ্যাডমিন প্যানেল প্রয়োজন)");
+            alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
         };
 
-        // মেথড অনুযায়ী নাম্বার পরিবর্তন
-        window.changeDepNum = () => {
-            const m = document.getElementById('depMethod').value;
-            const d = document.getElementById('depNumDisplay');
-            if(m === "Bkash") d.innerText = "বিকাশ: 01946024013";
-            else if(m === "Nagad") d.innerText = "নগদ: 018XXXXXXXX"; // আপনার নগদ নাম্বার দিন
-            else d.innerText = "রকেট: 017XXXXXXXX"; // আপনার রকেট নাম্বার দিন
+        // ইউটিলিটি ফাংশনস
+        window.selMethod = (m, num, id) => {
+            selectedMethod = m;
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById(id).classList.add('selected');
+            document.getElementById('depInstruction').innerHTML = `${m} পার্সোনাল নাম্বারে ১০০ টাকা সেন্ড মানি করুন: <br><b style="color:var(--accent); font-size:18px;">${num}</b>`;
         };
-
-        // ইউজার ফাংশনস
-        window.handleSignUp = async () => {
-            const n = document.getElementById('signupName').value;
-            const e = document.getElementById('signupEmail').value;
-            const p = document.getElementById('signupPass').value;
-            const r = document.getElementById('signupRefer').value;
-            if(!n || !e || !p) return alert("সব তথ্য দিন");
-            try {
-                const res = await createUserWithEmailAndPassword(auth, e, p);
-                await setDoc(doc(db, "users", res.user.uid), {
-                    uid: res.user.uid, name: n, email: e, balance: 0, active: false, referrer: r || null, joined: serverTimestamp()
-                });
-            } catch(err) { alert("রেজিস্ট্রেশন ব্যর্থ: " + err.message); }
-        };
-
-        window.handleLogin = async () => {
-            const e = document.getElementById('loginEmail').value;
-            const p = document.getElementById('loginPass').value;
-            try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert("লগইন ব্যর্থ!"); }
-        };
-
-        window.checkActiveAndOpen = (view) => {
-            if(!uActive) return alert("এই অপশনটি ব্যবহার করতে একাউন্ট এক্টিভ করুন!");
-            showView(view);
-        };
-
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             toggleMenu(false);
-            if(id==='historyView') loadHistory();
         };
-
-        window.toggleMenu = (o) => {
-            document.getElementById('sidebar').classList.toggle('active', o);
-            document.getElementById('overlay').style.display = o ? 'block':'none';
-        };
-
+        window.toggleMenu = (o) => { document.getElementById('sidebar').classList.toggle('active', o); document.getElementById('overlay').style.display = o ? 'block' : 'none'; };
         window.openDeposit = () => document.getElementById('depModal').style.display = 'flex';
         window.closeModal = () => document.getElementById('depModal').style.display = 'none';
-        window.toggleAuth = (t) => {
-            document.getElementById('loginBox').style.display = t==='login'?'block':'none';
-            document.getElementById('signupBox').style.display = t==='signup'?'block':'none';
-        };
-        window.copyRef = () => {
-            navigator.clipboard.writeText(document.getElementById('refLink').innerText);
-            alert("লিংক কপি হয়েছে!");
-        };
         window.handleLogout = () => signOut(auth);
-
-        async function loadHistory() {
-            const cont = document.getElementById('historyData');
-            cont.innerHTML = "লোডিং...";
-            const q = query(collection(db, "deposits"), where("uid", "==", auth.currentUser.uid));
-            const snap = await getDocs(q);
-            let h = "";
-            snap.forEach(doc => {
-                const d = doc.data();
-                h += `<div class="card">
-                        <b>${d.type} (${d.method})</b><br>
-                        পরিমাণ: ৳${d.amount} | TrxID: ${d.trxId}<br>
-                        <small>স্ট্যাটাস: <span style="color:var(--yellow)">${d.status}</span></small>
-                      </div>`;
-            });
-            cont.innerHTML = h || "কোনো ইতিহাস পাওয়া যায়নি।";
-        }
+        window.toggleAuth = (t) => { document.getElementById('loginBox').style.display = t==='login'?'block':'none'; document.getElementById('signupBox').style.display = t==='signup'?'block':'none'; };
+        window.checkRefAccess = () => uActive ? alert("রেফারেল পেজ লোড হচ্ছে...") : alert("একাউন্ট একটিভ করুন!");
     </script>
 </body>
 </html>

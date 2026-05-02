@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ইমার্জেন্সি হেল্প ম্যাপ 🇧🇩</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
@@ -224,13 +224,13 @@
             <button class="submit-btn" id="submitBtn" onclick="submitRequest()">🚨 SOS পাঠাও</button>
         </div>
         
-        <div id="status">ইমার্জেন্সি টাইপ সিলেক্ট করো</div>
+        <div id="status">লোড হইতেছে...</div>
         
         <div class="section-title">📍 তোমার আশেপাশে ইমার্জেন্সি</div>
         <div id="requestsList"></div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://lcavmfmgrezvegkiirnv.supabase.co';
@@ -245,26 +245,47 @@
         const typeColors = {blood: '#dc2626', ambulance: '#3b82f6', police: '#1e40af', fire: '#f97316'};
         const typeNames = {blood: 'রক্ত লাগবে', ambulance: 'অ্যাম্বুলেন্স', police: 'পুলিশ', fire: 'আগুন'};
 
+        // এরর ধরার জন্য
+        window.onerror = function(msg, url, line) {
+            statusDiv.innerText = 'এরর: ' + msg;
+            statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+            statusDiv.style.color = '#fca5a5';
+            return false;
+        }
+
         document.addEventListener('DOMContentLoaded', async function() {
             try {
+                statusDiv.innerText = 'Supabase কানেক্ট হইতেছে...';
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 
+                statusDiv.innerText = 'ম্যাপ লোড হইতেছে...';
                 map = L.map('map', {
                     center: [23.8103, 90.4125],
                     zoom: 12,
                     zoomControl: true
                 });
+                
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap'
+                    attribution: '© OpenStreetMap',
+                    maxZoom: 19
                 }).addTo(map);
+                
                 markers = L.layerGroup().addTo(map);
                 
-                loadRequests();
+                // ম্যাপ রিসাইজ ফিক্স
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+                
+                statusDiv.innerText = 'রিকোয়েস্ট লোড হইতেছে...';
+                await loadRequests();
                 setInterval(loadRequests, 10000);
                 
                 statusDiv.innerText = 'ম্যাপ রেডি ✅ ইমার্জেন্সি টাইপ সিলেক্ট করো';
             } catch (e) {
                 statusDiv.innerText = 'এরর: ' + e.message;
+                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+                statusDiv.style.color = '#fca5a5';
             }
         });
 
@@ -275,11 +296,15 @@
             });
             event.target.closest('.sos-btn').classList.add('selected');
             statusDiv.innerText = `${typeNames[type]} সিলেক্টেড। বিস্তারিত লিখে SOS পাঠাও`;
+            statusDiv.style.background = 'rgba(251, 191, 36, 0.1)';
+            statusDiv.style.color = '#fbbf24';
         }
 
         window.submitRequest = async function() {
             if (!selectedType) {
                 statusDiv.innerText = 'আগে ইমার্জেন্সি টাইপ সিলেক্ট করো';
+                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+                statusDiv.style.color = '#fca5a5';
                 return;
             }
             
@@ -288,11 +313,15 @@
             
             if (!details) {
                 statusDiv.innerText = 'বিস্তারিত লিখো কি হইছে';
+                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+                statusDiv.style.color = '#fca5a5';
                 return;
             }
             
             submitBtn.disabled = true;
             statusDiv.innerText = 'লোকেশন নিতেছি...';
+            statusDiv.style.background = 'rgba(251, 191, 36, 0.1)';
+            statusDiv.style.color = '#fbbf24';
             
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 const lat = pos.coords.latitude;
@@ -311,9 +340,13 @@
                 
                 if (error) {
                     statusDiv.innerText = 'এরর: ' + error.message;
+                    statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+                    statusDiv.style.color = '#fca5a5';
                     submitBtn.disabled = false;
                 } else {
                     statusDiv.innerText = '✅ SOS পাঠানো হইছে! আশেপাশের সবাই দেখতে পাবে';
+                    statusDiv.style.background = 'rgba(34, 197, 94, 0.2)';
+                    statusDiv.style.color = '#4ade80';
                     document.getElementById('phoneInput').value = '';
                     document.getElementById('detailsInput').value = '';
                     selectedType = null;
@@ -323,63 +356,72 @@
                 }
             }, (err) => {
                 statusDiv.innerText = 'GPS পাচ্ছে না। লোকেশন অন করো';
+                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
+                statusDiv.style.color = '#fca5a5';
                 submitBtn.disabled = false;
             }, {enableHighAccuracy: true, timeout: 10000});
         }
 
         async function loadRequests() {
-            const { data, error } = await supabase
-                .from('emergency_requests')
-                .select('*')
-                .eq('status', 'active')
-                .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
-                .order('created_at', { ascending: false });
-            
-            if (error) return;
-            
-            markers.clearLayers();
-            requestsList.innerHTML = '';
-            
-            data.forEach(req => {
-                const color = typeColors[req.type];
-                const icon = typeIcons[req.type];
-                const timeAgo = getTimeAgo(new Date(req.created_at));
+            try {
+                const { data, error } = await supabase
+                    .from('emergency_requests')
+                    .select('*')
+                    .eq('status', 'active')
+                    .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
+                    .order('created_at', { ascending: false });
                 
-                L.circleMarker([req.lat, req.lng], {
-                    radius: 12,
-                    fillColor: color,
-                    color: '#fff',
-                    weight: 3,
-                    fillOpacity: 0.9
-                }).bindPopup(`
-                    <div style="font-family: 'Hind Siliguri', sans-serif; text-align: center; min-width: 200px;">
-                        <b style="font-size: 16px;">${icon} ${typeNames[req.type]}</b><br>
-                        <span style="color: #64748b; font-size: 12px;">${timeAgo}</span><br>
-                        <p style="margin: 8px 0; color: #334155;">${req.details}</p>
-                        ${req.phone ? `<b style="color: #3b82f6;">📞 ${req.phone}</b>` : ''}
-                    </div>
-                `).addTo(markers);
+                if (error) {
+                    console.log('Load error:', error);
+                    return;
+                }
                 
-                const helpers = req.helpers || [];
-                const card = document.createElement('div');
-                card.className = 'request-card';
-                card.innerHTML = `
-                    <div class="header">
-                        <span class="type" style="color: ${color}">${icon} ${typeNames[req.type]}</span>
-                        <span class="time">${timeAgo}</span>
-                    </div>
-                    <div class="details">${req.details}</div>
-                    ${req.phone ? `<div class="phone">📞 ${req.phone}</div>` : ''}
-                    <button class="help-btn" onclick="helpRequest(${req.id})" ${helpers.includes(getUserId()) ? 'disabled' : ''}>
-                        ${helpers.includes(getUserId()) ? '✅ তুমি হেল্প করতেছো' : '🤝 আমি হেল্প করবো'}
-                    </button>
-                    ${helpers.length > 0 ? `<div class="helper-count">${helpers.length} জন হেল্প করতে আসতেছে</div>` : ''}
-                `;
-                requestsList.appendChild(card);
-            });
-            
-            if (data.length === 0) {
-                requestsList.innerHTML = '<div class="empty-state">😊 কোনো ইমার্জেন্সি রিকোয়েস্ট নাই এখন<br><small>সবাই নিরাপদে আছে</small></div>';
+                markers.clearLayers();
+                requestsList.innerHTML = '';
+                
+                data.forEach(req => {
+                    const color = typeColors[req.type];
+                    const icon = typeIcons[req.type];
+                    const timeAgo = getTimeAgo(new Date(req.created_at));
+                    
+                    L.circleMarker([req.lat, req.lng], {
+                        radius: 12,
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 3,
+                        fillOpacity: 0.9
+                    }).bindPopup(`
+                        <div style="font-family: 'Hind Siliguri', sans-serif; text-align: center; min-width: 200px;">
+                            <b style="font-size: 16px;">${icon} ${typeNames[req.type]}</b><br>
+                            <span style="color: #64748b; font-size: 12px;">${timeAgo}</span><br>
+                            <p style="margin: 8px 0; color: #334155;">${req.details}</p>
+                            ${req.phone ? `<b style="color: #3b82f6;">📞 ${req.phone}</b>` : ''}
+                        </div>
+                    `).addTo(markers);
+                    
+                    const helpers = req.helpers || [];
+                    const card = document.createElement('div');
+                    card.className = 'request-card';
+                    card.innerHTML = `
+                        <div class="header">
+                            <span class="type" style="color: ${color}">${icon} ${typeNames[req.type]}</span>
+                            <span class="time">${timeAgo}</span>
+                        </div>
+                        <div class="details">${req.details}</div>
+                        ${req.phone ? `<div class="phone">📞 ${req.phone}</div>` : ''}
+                        <button class="help-btn" onclick="helpRequest(${req.id})" ${helpers.includes(getUserId()) ? 'disabled' : ''}>
+                            ${helpers.includes(getUserId()) ? '✅ তুমি হেল্প করতেছো' : '🤝 আমি হেল্প করবো'}
+                        </button>
+                        ${helpers.length > 0 ? `<div class="helper-count">${helpers.length} জন হেল্প করতে আসতেছে</div>` : ''}
+                    `;
+                    requestsList.appendChild(card);
+                });
+                
+                if (data.length === 0) {
+                    requestsList.innerHTML = '<div class="empty-state">😊 কোনো ইমার্জেন্সি রিকোয়েস্ট নাই এখন<br><small>সবাই নিরাপদে আছে</small></div>';
+                }
+            } catch (e) {
+                console.log('Load error:', e);
             }
         }
 

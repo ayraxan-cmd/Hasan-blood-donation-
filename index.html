@@ -8,72 +8,69 @@
     <style>
         :root { --primary: #22c55e; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
-        
-        /* Navbar & Sidebar */
-        .navbar { background: var(--card); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 999; }
+        body { background-color: var(--bg); color: var(--text); overflow: hidden; }
+
+        /* Navigation Control */
+        .page { display: none; height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; overflow-y: auto; padding-bottom: 30px; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+
+        .navbar { background: var(--card); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
         .menu-btn { font-size: 24px; cursor: pointer; color: var(--primary); margin-right: 15px; }
-        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card); z-index: 1002; transition: 0.3s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
-        .sidebar.active { left: 0; }
-        .sidebar-item { padding: 15px; border-bottom: 1px solid #334155; cursor: pointer; color: #94a3b8; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1001; }
 
-        /* UI Elements */
-        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
-        .hero-card { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; text-align: center; margin-bottom: 20px; }
-        .amount { font-size: 32px; font-weight: 700; color: var(--primary); margin: 10px 0; }
-
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:disabled { background: #334155; cursor: not-allowed; }
-
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1005; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #334155; }
+        .container { padding: 20px; max-width: 480px; margin: 0 auto; }
+        .hero-card { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 25px; }
         
-        #timerDisplay { font-size: 40px; font-weight: bold; color: #fbbf24; margin: 20px 0; }
+        /* Balance UI with Gaps */
+        .stat-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #334155; text-align: center; margin-bottom: 20px; }
+        .balance-title { color: #94a3b8; font-size: 16px; letter-spacing: 1px; }
+        .amount { font-size: 42px; font-weight: 700; color: var(--primary); margin: 20px 0; display: block; }
+        
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 17px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-primary { background: var(--primary); color: white; }
+
+        /* Modal / Popups */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1005; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
+        #timerDisplay { font-size: 50px; font-weight: 800; color: #fbbf24; margin: 20px 0; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+
+        @keyframes fadeIn { from {opacity: 0; transform: scale(0.98);} to {opacity: 1; transform: scale(1);} }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <h2 style="color: var(--primary); margin-bottom: 20px;">Smart Invest</h2>
-        <div class="sidebar-item" onclick="openModal('taskModal')">🎯 ডেইলি টাস্ক (৳১০)</div>
-        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📥 ডিপোজিট</div>
-        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📤 উইথড্র</div>
-        <div class="sidebar-item" style="color: #ef4444;" onclick="location.reload()">🔄 রিফ্রেশ অ্যাপ</div>
-    </div>
-
-    <div class="navbar">
-        <div class="menu-btn" onclick="openSidebar()">☰</div>
-        <div style="font-weight: 700;">Smart Invest BD</div>
-    </div>
-
-    <div class="container">
-        <div class="hero-card">
-            <h2 id="userName">স্বাগতম!</h2>
-            <p>আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
+    <div id="homePage" class="page active">
+        <div class="navbar">
+            <div class="menu-btn">☰</div>
+            <div style="font-weight: 700;">Smart Invest BD</div>
         </div>
+        <div class="container">
+            <div class="hero-card">
+                <h2 id="userName">স্বাগতম!</h2>
+                <p>আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
+            </div>
 
-        <div class="stat-card">
-            <p style="color: #94a3b8;">বর্তমান ব্যালেন্স</p>
-            <div class="amount" id="userBalance">৳ 0</div>
-            <button class="btn btn-primary" onclick="openModal('taskModal')">টাস্ক কমপ্লিট করুন</button>
+            <div class="stat-card">
+                <p class="balance-title">ব র্ত মা ন  ব্যা লে ন্স</p>
+                <div class="amount" id="userBalance">৳ 0</div>
+                <button class="btn btn-primary" onclick="navigateTo('taskPage')">টাস্ক কমপ্লিট করুন</button>
+            </div>
         </div>
     </div>
 
-    <div id="taskModal" class="modal">
-        <div class="modal-content">
-            <h3 style="color: var(--primary);">আজকের টাস্ক</h3>
-            <p style="margin-top: 10px; color: #94a3b8;">নিচের বাটনে ক্লিক করে ৫ সেকেন্ড অপেক্ষা করুন।</p>
-            
-            <div id="timerDisplay" style="display: none;">৫</div>
-            
-            <button id="taskBtn" class="btn btn-primary" style="margin-top: 20px;" onclick="startTask()">লিংক ওপেন করুন</button>
-            <button class="btn" style="background: transparent; color: #94a3b8; margin-top: 10px;" onclick="closeModal('taskModal')">বন্ধ করুন</button>
+    <div id="taskPage" class="page">
+        <div class="navbar">
+            <div class="menu-btn" onclick="navigateTo('homePage')">←</div>
+            <div style="font-weight: 700;">ডেইলি টাস্ক</div>
+        </div>
+        <div class="container">
+            <div class="stat-card" style="margin-top: 50px;">
+                <h3 style="color: var(--primary);">আজকের টাস্ক</h3>
+                <p style="margin: 20px 0; color: #94a3b8; line-height: 1.6;">বাটনে ক্লিক করলে একটি কাজের লিংক ওপেন হবে। ৫ সেকেন্ড অপেক্ষা করলেই আপনার একাউন্টে ১০ টাকা যোগ হবে।</p>
+                
+                <div id="timerDisplay" style="display: none;">৫</div>
+                
+                <button id="taskBtn" class="btn btn-primary" onclick="runTask()">লিংক ওপেন করুন</button>
+            </div>
         </div>
     </div>
 
@@ -95,79 +92,79 @@
         const db = getFirestore(app);
         const auth = getAuth();
 
-        let currentTaskUrl = "";
-        let currentUserId = "";
+        let taskUrl = "";
+        let uid = "";
 
-        // ১. রিয়েল-টাইম টাস্ক লিংক আপডেট লিসেনার
-        onSnapshot(doc(db, "settings", "taskConfig"), (snapshot) => {
-            if (snapshot.exists()) {
-                currentTaskUrl = snapshot.data().url;
-                console.log("লিংক আপডেট হয়েছে:", currentTaskUrl);
-            }
+        // রিয়েল-টাইম টাস্ক লিংক লিসেনার
+        onSnapshot(doc(db, "settings", "taskConfig"), (s) => {
+            if(s.exists()) taskUrl = s.data().url;
         });
 
-        // ২. ইউজার ডাটা ও ব্যালেন্স লিসেনার
+        // ইউজার ডাটা লিসেনার
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                currentUserId = user.uid;
+                uid = user.uid;
                 onSnapshot(doc(db, "users", user.uid), (snap) => {
                     if (snap.exists()) {
-                        const data = snap.data();
-                        document.getElementById('userName').innerText = "স্বাগতম, " + data.name;
-                        document.getElementById('userBalance').innerText = "৳ " + data.balance;
+                        const d = snap.data();
+                        document.getElementById('userName').innerText = "স্বাগতম, " + d.name;
+                        document.getElementById('userBalance').innerText = "৳ " + d.balance.toLocaleString();
                     }
                 });
             }
         });
 
-        // ৩. টাস্ক ফাংশন (৫ সেকেন্ড টাইমার সহ)
-        window.startTask = () => {
-            if (!currentTaskUrl) {
-                alert("অ্যাডমিন এখনো কোনো লিংক সেট করেনি!");
-                return;
-            }
+        // টাস্ক লজিক
+        window.runTask = () => {
+            if(!taskUrl) return alert("কোনো কাজ পাওয়া যায়নি!");
 
-            // নতুন ট্যাবে লিংক ওপেন
-            window.open(currentTaskUrl, '_blank');
+            // নতুন উইন্ডোতে লিংক ওপেন (আপনার চাহিদা অনুযায়ী)
+            window.open(taskUrl, '_blank');
 
             const btn = document.getElementById('taskBtn');
             const timerDiv = document.getElementById('timerDisplay');
             
             btn.disabled = true;
-            btn.innerText = "কাজ চলছে...";
+            btn.innerText = "অপেক্ষা করুন...";
             timerDiv.style.display = "block";
 
-            let timeLeft = 5;
+            let count = 5;
             const timer = setInterval(async () => {
-                timeLeft--;
-                timerDiv.innerText = timeLeft;
-
-                if (timeLeft <= 0) {
+                count--;
+                timerDiv.innerText = count;
+                if(count <= 0) {
                     clearInterval(timer);
                     timerDiv.style.display = "none";
-                    
-                    // ৪. অটোমেটিক টাকা যোগ করা
                     try {
-                        await updateDoc(doc(db, "users", currentUserId), {
-                            balance: increment(10)
-                        });
-                        alert("অভিনন্দন! ১০ টাকা আপনার ব্যালেন্সে যোগ করা হয়েছে।");
-                        closeModal('taskModal');
+                        await updateDoc(doc(db, "users", uid), { balance: increment(10) });
+                        alert("৳১০ যোগ করা হয়েছে!");
+                        navigateTo('homePage'); // কাজ শেষ হলে হোমে ফিরবে
                         btn.disabled = false;
                         btn.innerText = "লিংক ওপেন করুন";
-                    } catch (e) {
-                        alert("টাকা যোগ করতে সমস্যা হয়েছে!");
-                    }
+                    } catch (e) { alert("Error!"); }
                 }
             }, 1000);
         };
-    </script>
 
-    <script>
-        function openSidebar() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-        function closeSidebar() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
-        function openModal(id) { closeSidebar(); document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        // নেভিগেশন হ্যান্ডলার (Back Button Fix)
+        window.navigateTo = (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            // হিস্ট্রিতে পুশ করা যাতে ব্যাক বাটন চাপলে অ্যাপ বন্ধ না হয়
+            history.pushState({page: pageId}, null, "");
+        };
+
+        window.onpopstate = (event) => {
+            if (event.state && event.state.page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(event.state.page).classList.add('active');
+            } else {
+                navigateTo('homePage');
+            }
+        };
+
+        // ডিফল্ট হিস্ট্রি সেটআপ
+        history.replaceState({page: 'homePage'}, null, "");
     </script>
 </body>
 </html>

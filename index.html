@@ -2,79 +2,416 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>বাংলাদেশ লোডশেডিং ম্যাপ</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ইমার্জেন্সি হেল্প ম্যাপ 🇧🇩</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {margin: 0; padding: 0; box-sizing: border-box;}
-        body {font-family: 'Hind Siliguri', sans-serif; background: #0f172a;}
-        #map {height: 60vh; width: 100%; background: #1e293b; z-index: 1;}
-        .controls {padding: 15px; background: #1e293b; text-align: center;}
-        h1 {color: #fff; font-size: 20px; margin-bottom: 10px;}
-        .btn {padding: 15px 10px; font-size: 16px; border-radius: 10px; border: none; margin: 5px; width: 45%; font-weight: bold; cursor: pointer;}
-        .off {background: #ef4444; color: white;}
-        .on {background: #22c55e; color: white;}
-        #status {color: #fbbf24; margin-top: 10px; font-size: 14px; min-height: 20px;}
+        * {margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
+        html, body {height: 100%; overflow: hidden;}
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: #0a0e1a;
+            display: flex;
+            flex-direction: column;
+            color: #e2e8f0;
+        }
+        #map {
+            height: 52vh;
+            width: 100%;
+            background: #1a1f2e;
+            z-index: 1;
+        }
+     .leaflet-control-zoom {
+            border: 2px solid #334155!important;
+            border-radius: 12px!important;
+        }
+     .leaflet-control-zoom a {
+            background: #1e293b!important;
+            color: #fff!important;
+            border-bottom: 1px solid #334155!important;
+        }
+     .controls {
+            padding: 12px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            flex-grow: 1;
+            overflow-y: auto;
+            border-top: 2px solid #334155;
+        }
+        h1 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+     .emergency-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+     .sos-btn {
+            padding: 16px 8px;
+            font-size: 14px;
+            border-radius: 12px;
+            border: 3px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Hind Siliguri', sans-serif;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+     .sos-btn:active {transform: scale(0.95);}
+     .sos-btn.selected {border-color: #fbbf24; box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);}
+     .sos-btn .icon {font-size: 26px;}
+     .blood {background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white;}
+     .ambulance {background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white;}
+     .police {background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white;}
+     .fire {background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); color: white;}
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border-radius: 10px;
+            border: 2px solid #334155;
+            background: #1e293b;
+            color: white;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus {outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);}
+        textarea {resize: none; height: 70px;}
+        
+     .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+     .submit-btn:active {transform: scale(0.98);}
+     .submit-btn:disabled {background: #475569; cursor: not-allowed;}
+        
+        #status {
+            color: #fbbf24;
+            margin-top: 10px;
+            font-size: 13px;
+            text-align: center;
+            padding: 8px;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 8px;
+            min-height: 20px;
+            font-weight: 500;
+        }
+        
+     .section-title {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 12px 0 8px;
+            text-align: center;
+        }
+        
+     .request-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+     .request-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+     .request-card .type {
+            font-weight: 700;
+            font-size: 15px;
+        }
+     .request-card .time {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+     .request-card .details {
+            color: #cbd5e1;
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+     .request-card .phone {
+            color: #3b82f6;
+            font-weight: 600;
+            margin: 4px 0;
+        }
+     .help-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 8px;
+            cursor: pointer;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+     .help-btn:active {transform: scale(0.98);}
+     .help-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+     .helper-count {
+            color: #22c55e;
+            font-size: 12px;
+            margin-top: 6px;
+            text-align: center;
+            font-weight: 600;
+        }
+     .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 30px 20px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
     <div class="controls">
-        <h1>⚡ লাইভ লোডশেডিং ম্যাপ</h1>
-        <button class="btn off" onclick="reportLoadShedding('off')">কারেন্ট নাই</button>
-        <button class="btn on" onclick="reportLoadShedding('on')">কারেন্ট আসছে</button>
-        <div id="status">ম্যাপ লোড হচ্ছে...</div>
+        <h1>🚨 ইমার্জেন্সি হেল্প ম্যাপ</h1>
+        
+        <div id="requestForm">
+            <div class="emergency-grid">
+                <button class="sos-btn blood" onclick="selectType('blood')">
+                    <span class="icon">🩸</span>
+                    <span>রক্ত লাগবে</span>
+                </button>
+                <button class="sos-btn ambulance" onclick="selectType('ambulance')">
+                    <span class="icon">🚑</span>
+                    <span>অ্যাম্বুলেন্স</span>
+                </button>
+                <button class="sos-btn police" onclick="selectType('police')">
+                    <span class="icon">👮</span>
+                    <span>পুলিশ</span>
+                </button>
+                <button class="sos-btn fire" onclick="selectType('fire')">
+                    <span class="icon">🔥</span>
+                    <span>আগুন</span>
+                </button>
+            </div>
+            
+            <input type="tel" id="phoneInput" placeholder="📞 তোমার ফোন নাম্বার (অপশনাল)" maxlength="11">
+            <textarea id="detailsInput" placeholder="📝 বিস্তারিত লিখো - কি হইছে, কোথায়, কয়জন..."></textarea>
+            <button class="submit-btn" id="submitBtn" onclick="submitRequest()">🚨 SOS পাঠাও</button>
+        </div>
+        
+        <div id="status">ইমার্জেন্সি টাইপ সিলেক্ট করো</div>
+        
+        <div class="section-title">📍 তোমার আশেপাশে ইমার্জেন্সি</div>
+        <div id="requestsList"></div>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://irwvbnlorfxuzhomcyew.supabase.co'; 
-        const SUPABASE_KEY = 'sb_publishable_L9XmUuSgcg9Ix7eyMHBndw_7iLZStBD'; 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const statusDiv = document.getElementById('status');
+        const SUPABASE_URL = 'https://lcavmfmgrezvegkiirnv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYW12Zm1ncnp2ZWNna2lpcm52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjI2NDAsImV4cCI6MjA5Mjk5ODY0MH0.lQSwpWzTwf2yJ8s5P12933QIiPxjd6i8x5-K7hrsL_g';
         
-        let map;
-        let markers;
+        let supabase, map, markers, selectedType = null;
+        const statusDiv = document.getElementById('status');
+        const requestsList = document.getElementById('requestsList');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        const typeIcons = {blood: '🩸', ambulance: '🚑', police: '👮', fire: '🔥'};
+        const typeColors = {blood: '#dc2626', ambulance: '#3b82f6', police: '#1e40af', fire: '#f97316'};
+        const typeNames = {blood: 'রক্ত লাগবে', ambulance: 'অ্যাম্বুলেন্স', police: 'পুলিশ', fire: 'আগুন'};
 
-        // পেজ লোড হলে ম্যাপ চালু হবে
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             try {
-                map = L.map('map').setView([23.8103, 90.4125], 11);
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                map = L.map('map', {
+                    center: [23.8103, 90.4125],
+                    zoom: 12,
+                    zoomControl: true
+                });
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap'
                 }).addTo(map);
                 markers = L.layerGroup().addTo(map);
-                statusDiv.innerText = 'ম্যাপ লোড হইছে ✅ ডাটা আনতেছি...';
-                loadReports();
+                
+                loadRequests();
+                setInterval(loadRequests, 10000);
+                
+                statusDiv.innerText = 'ম্যাপ রেডি ✅ ইমার্জেন্সি টাইপ সিলেক্ট করো';
             } catch (e) {
-                statusDiv.innerText = 'ম্যাপ এরর: ' + e.message;
+                statusDiv.innerText = 'এরর: ' + e.message;
+            }
+        });
+
+        window.selectType = function(type) {
+            selectedType = type;
+            document.querySelectorAll('.sos-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.closest('.sos-btn').classList.add('selected');
+            statusDiv.innerText = `${typeNames[type]} সিলেক্টেড। বিস্তারিত লিখে SOS পাঠাও`;
+        }
+
+        window.submitRequest = async function() {
+            if (!selectedType) {
+                statusDiv.innerText = 'আগে ইমার্জেন্সি টাইপ সিলেক্ট করো';
+                return;
+            }
+            
+            const phone = document.getElementById('phoneInput').value.trim();
+            const details = document.getElementById('detailsInput').value.trim();
+            
+            if (!details) {
+                statusDiv.innerText = 'বিস্তারিত লিখো কি হইছে';
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            statusDiv.innerText = 'লোকেশন নিতেছি...';
+            
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                
+                statusDiv.innerText = 'SOS পাঠানো হচ্ছে...';
+                
+                const { error } = await supabase.from('emergency_requests').insert([{
+                    type: selectedType,
+                    lat: lat,
+                    lng: lng,
+                    phone: phone || null,
+                    details: details,
+                    status: 'active'
+                }]);
+                
+                if (error) {
+                    statusDiv.innerText = 'এরর: ' + error.message;
+                    submitBtn.disabled = false;
+                } else {
+                    statusDiv.innerText = '✅ SOS পাঠানো হইছে! আশেপাশের সবাই দেখতে পাবে';
+                    document.getElementById('phoneInput').value = '';
+                    document.getElementById('detailsInput').value = '';
+                    selectedType = null;
+                    document.querySelectorAll('.sos-btn').forEach(btn => btn.classList.remove('selected'));
+                    submitBtn.disabled = false;
+                    loadRequests();
+                }
+            }, (err) => {
+                statusDiv.innerText = 'GPS পাচ্ছে না। লোকেশন অন করো';
+                submitBtn.disabled = false;
+            }, {enableHighAccuracy: true, timeout: 10000});
+        }
+
+        async function loadRequests() {
+            const { data, error } = await supabase
+                .from('emergency_requests')
+                .select('*')
+                .eq('status', 'active')
+                .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
+                .order('created_at', { ascending: false });
+            
+            if (error) return;
+            
+            markers.clearLayers();
+            requestsList.innerHTML = '';
+            
+            data.forEach(req => {
+                const color = typeColors[req.type];
+                const icon = typeIcons[req.type];
+                const timeAgo = getTimeAgo(new Date(req.created_at));
+                
+                L.circleMarker([req.lat, req.lng], {
+                    radius: 12,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 3,
+                    fillOpacity: 0.9
+                }).bindPopup(`
+                    <div style="font-family: 'Hind Siliguri', sans-serif; text-align: center; min-width: 200px;">
+                        <b style="font-size: 16px;">${icon} ${typeNames[req.type]}</b><br>
+                        <span style="color: #64748b; font-size: 12px;">${timeAgo}</span><br>
+                        <p style="margin: 8px 0; color: #334155;">${req.details}</p>
+                        ${req.phone ? `<b style="color: #3b82f6;">📞 ${req.phone}</b>` : ''}
+                    </div>
+                `).addTo(markers);
+                
+                const helpers = req.helpers || [];
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.innerHTML = `
+                    <div class="header">
+                        <span class="type" style="color: ${color}">${icon} ${typeNames[req.type]}</span>
+                        <span class="time">${timeAgo}</span>
+                    </div>
+                    <div class="details">${req.details}</div>
+                    ${req.phone ? `<div class="phone">📞 ${req.phone}</div>` : ''}
+                    <button class="help-btn" onclick="helpRequest(${req.id})" ${helpers.includes(getUserId()) ? 'disabled' : ''}>
+                        ${helpers.includes(getUserId()) ? '✅ তুমি হেল্প করতেছো' : '🤝 আমি হেল্প করবো'}
+                    </button>
+                    ${helpers.length > 0 ? `<div class="helper-count">${helpers.length} জন হেল্প করতে আসতেছে</div>` : ''}
+                `;
+                requestsList.appendChild(card);
+            });
+            
+            if (data.length === 0) {
+                requestsList.innerHTML = '<div class="empty-state">😊 কোনো ইমার্জেন্সি রিকোয়েস্ট নাই এখন<br><small>সবাই নিরাপদে আছে</small></div>';
             }
         }
 
-        async function reportLoadShedding(status) {
-            statusDiv.innerText = 'লোকেশন নিচ্ছি...';
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const { error } = await supabase.from('reports').insert([{
-                    status: status, lat: pos.coords.latitude, lng: pos.coords.longitude,
-                }]);
-                if(error) statusDiv.innerText = 'DB Insert এরর: ' + error.message;
-                else { statusDiv.innerText = 'ধন্যবাদ! রিপোর্ট যোগ হয়েছে ✅'; loadReports(); }
-            }, () => { statusDiv.innerText = 'লোকেশন পারমিশন দেন নাই'; });
+        window.helpRequest = async function(id) {
+            const userId = getUserId();
+            const { data } = await supabase.from('emergency_requests').select('helpers').eq('id', id).single();
+            const helpers = data.helpers || [];
+            
+            if (!helpers.includes(userId)) {
+                helpers.push(userId);
+                await supabase.from('emergency_requests').update({ helpers }).eq('id', id);
+                loadRequests();
+            }
         }
 
-        async function loadReports() {
-            const oneHourAgo = new Date(Date.now() - 60*60*1000).toISOString();
-            const { data, error } = await supabase.from('reports').select('*').gte('created_at', oneHourAgo);
-            if(error) { statusDiv.innerText = 'DB Read এরর: ' + error.message; return; }
-            markers.clearLayers();
-            data.forEach(report => {
-                const color = report.status === 'off' ? '#ef4444' : '#22c55e';
-                L.circleMarker([report.lat, report.lng], {radius: 8, fillColor: color, color: '#fff', weight: 1, fillOpacity: 0.8}).addTo(markers);
-            });
-            statusDiv.innerText = `লাস্ট ১ ঘন্টায় ${data.length} টা রিপোর্ট`;
+        function getUserId() {
+            let id = localStorage.getItem('userId');
+            if (!id) {
+                id = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('userId', id);
+            }
+            return id;
         }
-        setInterval(loadReports, 30000);
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'এইমাত্র';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} মিনিট আগে`;
+            const hours = Math.floor(minutes / 60);
+            return `${hours} ঘন্টা আগে`;
+        }
     </script>
 </body>
 </html>

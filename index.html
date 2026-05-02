@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest BD - Pro</title>
+    <title>Smart Invest BD - Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -16,7 +16,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-white); overflow-x: hidden; }
 
-        /* Navigation & Sidebar Menu */
+        /* Navigation & Sidebar */
         .navbar { 
             background: var(--card-dark); padding: 15px 20px; 
             display: flex; justify-content: space-between; align-items: center;
@@ -26,47 +26,47 @@
         
         .sidebar { 
             position: fixed; top: 0; left: -280px; width: 280px; height: 100%; 
-            background: var(--card-dark); z-index: 1001; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card-dark); z-index: 2005; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
         .sidebar.active { left: 0; }
         .sidebar h2 { color: var(--primary-green); margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; transition: 0.3s; margin-bottom: 5px; display: flex; align-items: center; }
         .sidebar-item:hover { background: rgba(34, 197, 94, 0.1); color: var(--primary-green); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; }
 
-        /* Main Content Layout */
-        .container { padding: 20px; max-width: 450px; margin: 0 auto; }
+        /* Auth & Activation Screens */
+        #authScreen, #activationScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 3000; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+        .auth-box, .active-card { background: var(--card-dark); padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
 
-        /* User Profile & Balance (Green Style) */
-        .balance-section { 
+        /* Main UI Container */
+        .container { padding: 20px; max-width: 480px; margin: 0 auto; }
+
+        /* Green Balance Box */
+        .hero-balance { 
             background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); 
-            padding: 30px 20px; border-radius: 24px; text-align: center;
-            box-shadow: 0 10px 25px rgba(22, 197, 94, 0.2); margin-bottom: 25px;
+            padding: 35px 20px; border-radius: 24px; text-align: center;
+            box-shadow: 0 10px 25px rgba(22, 197, 94, 0.3); margin-bottom: 25px;
         }
-        .balance-label { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
-        .balance-amount { font-size: 44px; font-weight: 800; margin: 15px 0; letter-spacing: 1px; }
+        .balance-label { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2.5px; opacity: 0.9; margin-top: 15px; }
+        .balance-amount { font-size: 46px; font-weight: 800; margin: 10px 0; letter-spacing: 1px; }
 
-        /* Task Section (Blue Style) */
+        /* Blue Task Box */
         .task-card { 
-            background: var(--card-dark); padding: 25px; border-radius: 24px; 
+            background: var(--card-dark); padding: 30px 20px; border-radius: 24px; 
             border: 2px solid var(--task-blue); text-align: center;
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.15); margin-bottom: 25px;
         }
-        .task-card h3 { color: var(--task-blue); font-size: 20px; margin-bottom: 10px; }
-        .task-card p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
         
-        .btn-task { 
-            width: 100%; padding: 16px; border: none; border-radius: 16px; 
-            background: var(--task-blue); color: white; font-weight: 700; 
-            font-size: 17px; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-        .btn-task:active { transform: scale(0.97); }
+        /* Buttons */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; font-size: 17px; transition: 0.3s; margin-top: 10px; }
+        .btn-green { background: var(--primary-green); color: white; }
+        .btn-blue { background: var(--task-blue); color: white; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
+        .input-group input { width: 100%; padding: 14px; background: #0f172a; border: 2px solid #334155; border-radius: 12px; color: white; margin-bottom: 15px; }
 
-        /* Animation */
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-        .animate { animation: fadeIn 0.5s ease-out; }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--card-dark); padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body>
@@ -75,40 +75,86 @@
     <div class="sidebar" id="sidebar">
         <h2>মেনু</h2>
         <div class="sidebar-item" onclick="location.reload()">🏠 হোম পেজ</div>
-        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📥 ডিপোজিট লিস্ট</div>
-        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📤 উইথড্র লিস্ট</div>
-        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">👥 ইউজার প্রোফাইল</div>
-        <div class="sidebar-item" style="color: #ef4444; margin-top: 50px;" onclick="alert('Logout')">🚪 লগআউট</div>
+        <div class="sidebar-item" onclick="openModal('depositModal')">📥 ডিপোজিট করুন</div>
+        <div class="sidebar-item" onclick="alert('উইথড্র শীঘ্রই আসছে')">📤 উইথড্র রিকোয়েস্ট</div>
+        <div class="sidebar-item" onclick="window.open('https://wa.me/8801946024013')">🛠 হেল্প ও সাপোর্ট</div>
+        <div class="sidebar-item" style="color: #ef4444; margin-top: 50px;" onclick="handleLogout()">🚪 লগআউট</div>
     </div>
 
-    <div class="navbar">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <div style="font-weight: 700; font-size: 18px;">Smart Invest BD</div>
-        <div style="width: 30px;"></div> </div>
-
-    <div class="container animate">
-        
-        <div class="balance-section">
-            <h2 id="userName" style="margin-bottom: 5px; font-size: 22px;">স্বাগতম!</h2>
-            <p style="font-size: 13px; opacity: 0.8; margin-bottom: 20px;">আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px;">
-            <p class="balance-label">ব র্ত মা ন  ব্যা লে ন্স</p>
-            <div class="balance-amount" id="userBalance">৳ 0</div>
+    <div id="authScreen">
+        <div class="auth-box" id="loginBox">
+            <h2 style="margin-bottom: 20px;">লগইন</h2>
+            <div class="input-group"><input type="email" id="loginEmail" placeholder="ইমেল"></div>
+            <div class="input-group"><input type="password" id="loginPass" placeholder="পাসওয়ার্ড"></div>
+            <button class="btn btn-green" onclick="handleLogin()">প্রবেশ করুন</button>
+            <p style="margin-top:15px; color:#94a3b8; cursor:pointer;" onclick="toggleAuth('signup')">নতুন অ্যাকাউন্ট খুলুন</p>
         </div>
-
-        <div class="task-card">
-            <div style="font-size: 40px; margin-bottom: 10px;">🎯</div>
-            <h3>ডেইলি টাস্ক কমপ্লিট</h3>
-            <p>প্রতিদিন টাস্ক কমপ্লিট করে জিতে নিন নিশ্চিত ১০ টাকা বোনাস!</p>
-            <button class="btn-task" onclick="startTask()">টাস্ক শুরু করুন</button>
+        <div class="auth-box" id="signupBox" style="display: none;">
+            <h2 style="margin-bottom: 20px;">রেজিস্ট্রেশন</h2>
+            <div class="input-group"><input type="text" id="signupName" placeholder="পুরো নাম"></div>
+            <div class="input-group"><input type="email" id="signupEmail" placeholder="ইমেল"></div>
+            <div class="input-group"><input type="password" id="signupPass" placeholder="পাসওয়ার্ড"></div>
+            <button class="btn btn-green" onclick="handleSignUp()">রেজিস্ট্রেশন করুন</button>
+            <p style="margin-top:15px; color:#94a3b8; cursor:pointer;" onclick="toggleAuth('login')">লগইন করুন</p>
         </div>
+    </div>
 
+    <div id="activationScreen" style="display: none;">
+        <div class="active-card">
+            <h1 style="font-size: 50px; margin-bottom: 10px;">🔒</h1>
+            <h2 style="color: #fbbf24; margin-bottom: 10px;">অ্যাকাউন্ট নিষ্ক্রিয়</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">আপনার অ্যাকাউন্টটি সচল করতে ১০০ টাকা ডিপোজিট করুন।</p>
+            <p style="margin-bottom: 20px; font-weight: bold; background: #0f172a; padding: 10px; border-radius: 10px;">বিকাশ (Personal): 01946024013</p>
+            <button class="btn btn-green" onclick="openModal('depositModal')">৳১০০ ডিপোজিট করুন</button>
+            <button class="btn" style="background:#334155; color:white;" onclick="handleLogout()">লগআউট</button>
+        </div>
+    </div>
+
+    <div id="mainContent" style="display:none;">
+        <div class="navbar">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <div style="font-weight: 700; font-size: 18px;">Smart Invest BD</div>
+            <div style="width: 30px;"></div>
+        </div>
+        <div class="container">
+            <div class="hero-balance">
+                <h2 id="welcomeName">স্বাগতম!</h2>
+                <p style="font-size: 13px; opacity: 0.8;">আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
+                <div style="height: 1px; background: rgba(255,255,255,0.2); margin: 20px 0;"></div>
+                <p class="balance-label">ব র্ত মা ন  ব্যা লে ন্স</p>
+                <div class="balance-amount" id="userBalance">৳ 0</div>
+            </div>
+
+            <div class="task-card">
+                <div style="font-size: 45px; margin-bottom: 10px;">🎯</div>
+                <h3 style="color: var(--task-blue);">ডেইলি টাস্ক কমপ্লিট</h3>
+                <p>কাজটি সম্পন্ন করে আপনার একাউন্টে ১০ টাকা বোনাস বুঝে নিন।</p>
+                <button class="btn btn-blue" onclick="startTask()">টাস্ক শুরু করুন</button>
+            </div>
+
+            <div style="background: var(--card-dark); padding: 25px; border-radius: 24px; border: 1px solid #334155; text-align: center;">
+                <h3 style="color: var(--primary-green);">মাসিক প্রফিট ১৫%</h3>
+                <p style="font-size: 14px; color: #94a3b8; margin: 10px 0;">মিনিমাম ইনভেস্ট ৳১০০০</p>
+                <button class="btn btn-green" style="width: auto; padding: 12px 30px;" onclick="openModal('depositModal')">বিনিয়োগ শুরু</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <h3>ডিপোজিট করুন</h3>
+            <p style="color: #fbbf24; margin: 15px 0; background: #0f172a; padding: 10px; border-radius: 10px;">বিকাশ (Personal): 01946024013</p>
+            <div class="input-group"><input type="number" id="depAmount" placeholder="পরিমাণ"></div>
+            <div class="input-group"><input type="text" id="depTrx" placeholder="ট্রানজেকশন আইডি (TrxID)"></div>
+            <button class="btn btn-green" onclick="submitDeposit()">সাবমিট করুন</button>
+            <button class="btn" style="background:transparent; color:#94a3b8" onclick="closeModal('depositModal')">বন্ধ করুন</button>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyByoyfmwZJyIwYj09NdLwHLpsAVZ0joZq4",
@@ -120,50 +166,96 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth();
+        const db = getFirestore(app);
 
-        let currentUid = "";
-        let taskUrl = "";
+        let liveTaskUrl = "";
 
-        // ১. মেনু কন্ট্রোল
-        window.toggleMenu = () => {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        // Auth Functions
+        window.handleSignUp = async () => {
+            const n = document.getElementById('signupName').value;
+            const e = document.getElementById('signupEmail').value;
+            const p = document.getElementById('signupPass').value;
+            if(!n || !e || !p) return alert("সব ঘর পূরণ করুন");
+            try {
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "users", res.user.uid), { name: n, email: e, balance: 0, status: "active" });
+            } catch (err) { alert("রেজিস্ট্রেশন ব্যর্থ!"); }
         };
 
-        // ২. ইউজার ব্যালেন্স ও ডাটা
+        window.handleLogin = async () => {
+            const e = document.getElementById('loginEmail').value;
+            const p = document.getElementById('loginPass').value;
+            try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { alert("লগইন ভুল!"); }
+        };
+
+        window.handleLogout = () => signOut(auth);
+
+        // Sidebar Control
+        window.toggleMenu = () => {
+            const s = document.getElementById('sidebar');
+            const o = document.getElementById('overlay');
+            s.classList.toggle('active');
+            o.style.display = s.classList.contains('active') ? 'block' : 'none';
+        };
+
+        // Real-time State & Data
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                currentUid = user.uid;
-                onSnapshot(doc(db, "users", user.uid), (snap) => {
-                    if (snap.exists()) {
-                        const d = snap.data();
-                        document.getElementById('userName').innerText = "স্বাগতম, " + d.name;
-                        document.getElementById('userBalance').innerText = "৳ " + d.balance.toLocaleString();
+                onSnapshot(doc(db, "users", user.uid), (s) => {
+                    if (s.exists()) {
+                        const d = s.data();
+                        document.getElementById('authScreen').style.display = 'none';
+                        if (d.balance < 100) {
+                            document.getElementById('activationScreen').style.display = 'flex';
+                            document.getElementById('mainContent').style.display = 'none';
+                        } else {
+                            document.getElementById('activationScreen').style.display = 'none';
+                            document.getElementById('mainContent').style.display = 'block';
+                            document.getElementById('welcomeName').innerText = "স্বাগতম, " + d.name;
+                            document.getElementById('userBalance').innerText = "৳ " + d.balance.toLocaleString();
+                        }
                     }
                 });
+                // Get Task Link
+                onSnapshot(doc(db, "settings", "taskConfig"), (s) => {
+                    if(s.exists()) liveTaskUrl = s.data().url;
+                });
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('activationScreen').style.display = 'none';
             }
         });
 
-        // ৩. টাস্ক লিংক আপডেট
-        onSnapshot(doc(db, "settings", "taskConfig"), (s) => {
-            if(s.exists()) taskUrl = s.data().url;
-        });
-
-        // ৪. টাস্ক ফাংশন
+        // Task Logic
         window.startTask = () => {
-            if(!taskUrl) return alert("বর্তমানে কোনো কাজ নেই!");
-            window.open(taskUrl, '_blank');
-            
+            if(!liveTaskUrl) return alert("বর্তমানে কাজ নেই!");
+            window.open(liveTaskUrl, '_blank');
             setTimeout(async () => {
-                if(confirm("৫ সেকেন্ড শেষ! ১০ টাকা বোনাস নিতে 'OK' চাপুন।")) {
-                    await updateDoc(doc(db, "users", currentUid), { balance: increment(10) });
+                if(confirm("কাজ সম্পন্ন হয়েছে? ১০ টাকা যোগ করতে OK চাপুন।")) {
+                    await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10) });
                 }
             }, 5000);
         };
+
+        window.submitDeposit = async () => {
+            const a = document.getElementById('depAmount').value;
+            const t = document.getElementById('depTrx').value;
+            if(!a || !t) return alert("তথ্য দিন");
+            await addDoc(collection(db, "transactions"), { userId: auth.currentUser.uid, userEmail: auth.currentUser.email, amount: Number(a), transactionId: t, status: "pending", date: new Date().toISOString() });
+            alert("ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে!");
+            closeModal('depositModal');
+        };
+    </script>
+
+    <script>
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; if(id !== 'depositModal') toggleMenu(); }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function toggleAuth(type) {
+            document.getElementById('loginBox').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('signupBox').style.display = type === 'signup' ? 'block' : 'none';
+        }
     </script>
 </body>
 </html>

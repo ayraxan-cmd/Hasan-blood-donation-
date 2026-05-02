@@ -2,127 +2,221 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>ইমার্জেন্সি হেল্প ম্যাপ 🇧🇩</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Invest BD - নিরাপদ বিনিয়োগ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
-        html, body {height: 100%; font-family: sans-serif; background: #0a0e1a; color: #e2e8f0;}
-        #map {height: 50vh; width: 100%; background: #1a1f2e;}
-       .controls {padding: 12px; background: #1e293b; height: 50vh; overflow-y: auto;}
-        h1 {color: #fff; font-size: 18px; text-align: center; margin-bottom: 10px;}
-       .emergency-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;}
-       .sos-btn {padding: 16px 8px; font-size: 14px; border-radius: 12px; border: 3px solid transparent; font-weight: 700; cursor: pointer; text-align: center;}
-       .sos-btn.selected {border-color: #fbbf24;}
-       .blood {background: #dc2626; color: white;}
-       .ambulance {background: #3b82f6; color: white;}
-       .police {background: #1e40af; color: white;}
-       .fire {background: #f97316; color: white;}
-        input, textarea {width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 2px solid #334155; background: #1e293b; color: white; font-size: 14px;}
-       .submit-btn {width: 100%; padding: 14px; background: #22c55e; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; margin-top: 8px; cursor: pointer;}
-       .submit-btn:disabled {background: #475569;}
-        #status {color: #fbbf24; margin-top: 10px; font-size: 13px; text-align: center; padding: 8px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;}
-       .request-card {background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 12px; margin: 8px 0; font-size: 13px;}
-       .help-btn {width: 100%; padding: 10px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; margin-top: 8px; cursor: pointer;}
-       .help-btn:disabled {background: #475569;}
-       .empty-state {text-align: center; color: #64748b; padding: 30px 20px; font-size: 14px;}
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .container {max-width: 480px; margin: 0 auto; padding: 20px;}
+        .hero {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+        .hero h1 {font-size: 28px; font-weight: 700; color: white; margin-bottom: 8px;}
+        .hero p {color: rgba(255,255,255,0.9); font-size: 15px;}
+        .live-stats {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .live-stats .label {color: #94a3b8; font-size: 13px;}
+        .live-stats .amount {font-size: 32px; font-weight: 700; color: #22c55e; margin: 8px 0;}
+        .live-stats .subtext {color: #64748b; font-size: 12px;}
+        
+        .plan-grid {display: grid; gap: 12px; margin-bottom: 20px;}
+        .plan-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-card.popular {border-color: #fbbf24; box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);}
+        .popular-badge {
+            position: absolute;
+            top: 12px;
+            right: -30px;
+            background: #fbbf24;
+            color: #0f172a;
+            padding: 4px 40px;
+            transform: rotate(45deg);
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .plan-name {font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px;}
+        .plan-roi {font-size: 36px; font-weight: 700; color: #22c55e; margin-bottom: 4px;}
+        .plan-roi span {font-size: 16px; color: #94a3b8;}
+        .plan-details {color: #94a3b8; font-size: 13px; margin: 12px 0;}
+        .plan-feature {display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px;}
+        .plan-feature::before {content: "✓"; color: #22c55e; font-weight: 700;}
+        .invest-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        .invest-btn:active {transform: scale(0.98);}
+        
+        .calculator {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .calculator h2 {font-size: 18px; margin-bottom: 16px; text-align: center;}
+        .input-group {margin-bottom: 16px;}
+        .input-group label {display: block; color: #94a3b8; font-size: 13px; margin-bottom: 6px;}
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        .result-box {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 16px;
+        }
+        .result-label {color: #94a3b8; font-size: 13px;}
+        .result-amount {font-size: 28px; font-weight: 700; color: #22c55e; margin: 8px 0;}
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .feature-box {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .feature-icon {font-size: 32px; margin-bottom: 8px;}
+        .feature-title {font-weight: 600; font-size: 14px; margin-bottom: 4px;}
+        .feature-text {color: #94a3b8; font-size: 12px;}
+        
+        .whatsapp-btn {
+            width: 100%;
+            padding: 16px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .footer {text-align: center; color: #64748b; font-size: 12px; padding: 20px 0;}
     </style>
 </head>
 <body>
-    <div id="map"></div>
-    <div class="controls">
-        <h1>🚨 ইমার্জেন্সি হেল্প ম্যাপ</h1>
-        <div class="emergency-grid">
-            <button class="sos-btn blood" onclick="selectType('blood', this)">🩸<br>রক্ত লাগবে</button>
-            <button class="sos-btn ambulance" onclick="selectType('ambulance', this)">🚑<br>অ্যাম্বুলেন্স</button>
-            <button class="sos-btn police" onclick="selectType('police', this)">👮<br>পুলিশ</button>
-            <button class="sos-btn fire" onclick="selectType('fire', this)">🔥<br>আগুন</button>
+    <div class="container">
+        <div class="hero">
+            <h1>💰 Smart Invest BD</h1>
+            <p>নিরাপদ বিনিয়োগ, নিশ্চিত প্রফিট</p>
         </div>
-        <input type="tel" id="phoneInput" placeholder="📞 ফোন নাম্বার (অপশনাল)">
-        <textarea id="detailsInput" placeholder="📝 বিস্তারিত লিখো - কি হইছে, কোথায়..."></textarea>
-        <button class="submit-btn" id="submitBtn" onclick="submitRequest()">🚨 SOS পাঠাও</button>
-        <div id="status">স্টার্ট হইতেছে...</div>
-        <div style="color: #94a3b8; font-size: 12px; text-align: center; margin: 12px 0 8px;">📍 তোমার আশেপাশে ইমার্জেন্সি</div>
-        <div id="requestsList"></div>
-    </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://lcavmfmgrezvegkiirnv.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYW12Zm1ncnp2ZWNna2lpcm52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjI2NDAsImV4cCI6MjA5Mjk5ODY0MH0.lQSwpWzTwf2yJ8s5P12933QIiPxjd6i8x5-K7hrsL_g';
+        <div class="live-stats">
+            <div class="label">আজ পর্যন্ত মোট পেআউট</div>
+            <div class="amount" id="liveAmount">৳ 12,45,890</div>
+            <div class="subtext">🔴 Live • 847 জন ইনভেস্টর</div>
+        </div>
 
-        let supabase, map, markers, selectedType = null;
-        const statusDiv = document.getElementById('status');
-        const typeNames = {blood: 'রক্ত লাগবে', ambulance: 'অ্যাম্বুলেন্স', police: 'পুলিশ', fire: 'আগুন'};
-        const typeColors = {blood: '#dc2626', ambulance: '#3b82f6', police: '#1e40af', fire: '#f97316'};
+        <div class="calculator">
+            <h2>🧮 প্রফিট ক্যালকুলেটর</h2>
+            <div class="input-group">
+                <label>ইনভেস্ট এমাউন্ট (৳)</label>
+                <input type="number" id="investAmount" value="10000" min="1000" oninput="calculateProfit()">
+            </div>
+            <div class="input-group">
+                <label>প্ল্যান সিলেক্ট করো</label>
+                <select id="planSelect" onchange="calculateProfit()">
+                    <option value="15">বেসিক - 15% মাসিক</option>
+                    <option value="20">স্ট্যান্ডার্ড - 20% মাসিক</option>
+                    <option value="30">প্রিমিয়াম - 30% মাসিক</option>
+                </select>
+            </div>
+            <div class="result-box">
+                <div class="result-label">মাসিক প্রফিট</div>
+                <div class="result-amount" id="monthlyProfit">৳ 1,500</div>
+                <div class="result-label">৩ মাসে মোট: <span id="totalProfit" style="color: #22c55e; font-weight: 700;">৳ 4,500</span></div>
+            </div>
+        </div>
 
-        statusDiv.innerText = 'ম্যাপ লোড হইতেছে...';
-        map = L.map('map').setView([23.8103, 90.4125], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        markers = L.layerGroup().addTo(map);
+        <h2 style="text-align: center; margin-bottom: 16px; font-size: 18px;">📊 ইনভেস্টমেন্ট প্ল্যান</h2>
+        <div class="plan-grid">
+            <div class="plan-card">
+                <div class="plan-name">বেসিক প্ল্যান</div>
+                <div class="plan-roi">15% <span>/মাস</span></div>
+                <div class="plan-details">মিনিমাম ৳1,000 • 3 মাস লক</div>
+                <div class="plan-feature">দৈনিক উইথড্র</div>
+                <div class="plan-feature">24/7 সাপোর্ট</div>
+                <div class="plan-feature">রেফার বোনাস 5%</div>
+                <button class="invest-btn" onclick="investNow('Basic')">এখনই ইনভেস্ট করো</button>
+            </div>
 
-        statusDiv.innerText = 'ডাটাবেজ কানেক্ট হইতেছে...';
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            <div class="plan-card popular">
+                <div class="popular-badge">POPULAR</div>
+                <div class="plan-name">স্ট্যান্ডার্ড প্ল্যান</div>
+                <div class="plan-roi">20% <span>/মাস</span></div>
+                <div class="plan-details">মিনিমাম ৳5,000 • 3 মাস লক</div>
+                <div class="plan-feature">ইনস্ট্যান্ট উইথড্র</div>
+                <div class="plan-feature">VIP সাপোর্ট</div>
+                <div class="plan-feature">রেফার বোনাস 8%</div>
+                <button class="invest-btn" onclick="investNow('Standard')">এখনই ইনভেস্ট করো</button>
+            </div>
 
-        loadRequests();
-        setInterval(loadRequests, 10000);
-        statusDiv.innerText = 'রেডি ✅ টাইপ সিলেক্ট করো';
+            <div class="plan-card">
+                <div class="plan-name">প্রিমিয়াম প্ল্যান</div>
+                <div class="plan-roi">30% <span>/মাস</span></div>
+                <div class="plan-details">মিনিমাম ৳20,000 • 6 মাস লক</div>
+                <div class="plan-feature">প্রায়োরিটি উইথড্র</div>
+                <div class="plan-feature">ডেডিকেটেড ম্যানেজার</div>
+                <div class="plan-feature">রেফার বোনাস 12%</div>
+                <button class="invest-btn" onclick="investNow('Premium')">এখনই ইনভেস্ট করো</button>
+            </div>
+        </div>
 
-        function selectType(type, btn) {
-            selectedType = type;
-            document.querySelectorAll('.sos-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            statusDiv.innerText = typeNames[type] + ' সিলেক্টেড';
-        }
-
-        async function submitRequest() {
-            if (!selectedType) return alert('আগে ইমার্জেন্সি টাইপ সিলেক্ট করো');
-            const details = document.getElementById('detailsInput').value.trim();
-            if (!details) return alert('বিস্তারিত লিখো');
-
-            statusDiv.innerText = 'লোকেশন নিতেছি...';
-            document.getElementById('submitBtn').disabled = true;
-
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                statusDiv.innerText = 'SOS পাঠানো হচ্ছে...';
-                const { error } = await supabase.from('emergency_requests').insert([{
-                    type: selectedType,
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude,
-                    phone: document.getElementById('phoneInput').value.trim() || null,
-                    details: details,
-                    status: 'active'
-                }]);
-
-                if (error) {
-                    statusDiv.innerText = 'এরর: ' + error.message;
-                    alert('এরর: ' + error.message);
-                } else {
-                    statusDiv.innerText = '✅ SOS পাঠানো হইছে!';
-                    document.getElementById('phoneInput').value = '';
-                    document.getElementById('detailsInput').value = '';
-                    document.querySelectorAll('.sos-btn').forEach(b => b.classList.remove('selected'));
-                    selectedType = null;
-                    loadRequests();
-                }
-                document.getElementById('submitBtn').disabled = false;
-            }, () => {
-                statusDiv.innerText = 'GPS অন করো';
-                alert('GPS অন করো');
-                document.getElementById('submitBtn').disabled = false;
-            });
-        }
-
-        async function loadRequests() {
-            const { data } = await supabase
-              .from('emergency_requests')
-              .select('*')
-              .eq('status', 'active')
-              .gte('created_at', new Date(Date.now() - 2*60*60*1000).toISOString())
-              .order('created_at', { ascending: false });
-
-            markers.clearLayers();
+        <div class="features">
+            <div class="feature-box">
+                <div class="feature-icon">🔒</div>
+                            markers.clearLayers();
             const list = document.getElementById('requestsList');
             list.innerHTML = '';
 

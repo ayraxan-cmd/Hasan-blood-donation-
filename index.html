@@ -33,13 +33,18 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; }
 .btn-green { background: var(--primary-green); color: white; }
 
-.refer-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.refer-table th, .refer-table td { border: 1px solid #334155; padding: 10px; text-align: center; font-size: 13px; }
-.refer-table th { background: #334155; color: var(--yellow); }
-
 .status-badge { padding: 2px 8px; border-radius: 5px; font-size: 11px; float: right; }
 .pending { background: #f59e0b; } .approved { background: #10b981; } .rejected { background: #ef4444; }
 
+/* হেল্প বাটন স্টাইল */
+.help-fab { position: fixed; bottom: 20px; right: 20px; z-index: 3000; }
+.main-fab { background: #3b82f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s; }
+.help-options { position: absolute; bottom: 70px; right: 0; display: none; flex-direction: column; gap: 10px; }
+.help-options.show { display: flex; animation: slideUp 0.3s ease; }
+.opt { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.whatsapp { background: #25D366; } .telegram { background: #0088cc; } .facebook { background: #1877F2; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
 @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.02);} 100% {transform: scale(1);} }
 </style>
@@ -47,6 +52,15 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <body>
 
 <div class="overlay" id="overlay" onclick="toggleMenu(false)"></div>
+
+<div class="help-fab" id="helpFab">
+    <div class="help-options" id="helpOptions">
+        <a href="https://wa.me/01946024013" class="opt whatsapp" target="_blank">💬</a>
+        <a href="https://t.me/Hasan99809" class="opt telegram" target="_blank">✈️</a>
+        <a href="https://facebook.com/YOUR_PAGE" class="opt facebook" target="_blank">Facebook</a>
+    </div>
+    <div class="main-fab" onclick="toggleHelp()">🆘</div>
+</div>
 
 <div class="sidebar" id="sidebar">
 <h2 style="color: var(--primary-green); margin-bottom: 25px;">Menu</h2>
@@ -124,19 +138,6 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <p id="refLinkDisp" style="font-size:10px; color:var(--primary-green); margin:10px 0; word-break: break-all;">-</p>
 <button class="btn btn-green" style="padding:10px; font-size:13px;" onclick="copyReferLink()">লিঙ্ক কপি করুন</button>
 </div>
-<h4 style="margin: 15px 0 10px 5px;">রেফারেল ইনকাম:</h4>
-<div class="card" style="padding: 0;">
-<table class="refer-table">
-<thead><tr><th>জেনারেশন</th><th>ইউজার</th><th>ইনকাম</th></tr></thead>
-<tbody>
-<tr><td>Level 1</td><td>-</td><td>৳15</td></tr>
-<tr><td>Level 2</td><td>-</td><td>৳10</td></tr>
-<tr><td>Level 3</td><td>-</td><td>৳5</td></tr>
-<tr><td>Level 4</td><td>-</td><td>৳2</td></tr>
-<tr><td>Level 5</td><td>-</td><td>৳1</td></tr>
-</tbody>
-</table>
-</div>
 </div>
 </div>
 
@@ -161,12 +162,7 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <div id="depositModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:4000; align-items:center; justify-content:center;">
 <div style="background:var(--card-dark); padding:25px; border-radius:25px; width:90%; max-width:400px;">
 <h3 style="text-align:center">ডিপোজিট</h3><br>
-<p style="text-align:center; font-size:12px; color:var(--yellow); margin-bottom:10px;">একটিভ করতে ঠিক ১০০ টাকা পাঠান</p>
-<select id="depMethod" onchange="updatePayNum()" class="input-group" style="padding:10px; margin-bottom:10px; border-radius:8px; width:100%; background:#0f172a; color:white; border:1px solid #334155;">
-<option value="Bkash">বিকাশ</option><option value="Nagad">নগদ</option><option value="Rocket">রকেট</option>
-</select>
 <p id="adminNum" style="color:var(--yellow); text-align:center; padding:10px; border:1px dashed var(--yellow); margin-bottom:15px; border-radius:10px;">বিকাশ: 01946024013</p>
-<input type="number" id="depAmount" value="100" readonly style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; background:#1e293b; color:gray;">
 <input type="text" id="depTrx" placeholder="ট্রাঞ্জেকশন আইডি (TrxID)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
 <button class="btn btn-green" onclick="submitDeposit()">সাবমিট</button>
 <button class="btn" onclick="closeModal()" style="background:transparent; color:#94a3b8">বন্ধ করুন</button>
@@ -193,12 +189,15 @@ const db = getFirestore(app);
 
 let userBal = 0; let userActive = false; let lastTaskDate = "";
 
-// ইউআরএল থেকে রেফার কোড রিড করার ফাংশন
+// হেল্প বাটন টগল ফাংশন
+window.toggleHelp = () => {
+    document.getElementById('helpOptions').classList.toggle('show');
+};
+
 function checkReferral() {
     const params = new URLSearchParams(window.location.search);
     const refCode = params.get('ref');
     if (refCode) {
-        // যদি রেফার কোড থাকে, তবে সাইনআপ বক্স ওপেন হবে এবং কোড বসে যাবে
         toggleAuth('signup');
         document.getElementById('signupRefer').value = refCode;
     }
@@ -206,6 +205,7 @@ function checkReferral() {
 
 onAuthStateChanged(auth, (user) => {
     if(user) {
+        document.getElementById('helpFab').style.display = "block";
         onSnapshot(doc(db, "users", user.uid), (s) => {
             if(s.exists()){
                 const d = s.data();
@@ -223,33 +223,27 @@ onAuthStateChanged(auth, (user) => {
             }
         });
     } else { 
+        document.getElementById('helpFab').style.display = "none";
         showView('authView'); 
-        checkReferral(); // লগইন না থাকলে রেফার চেক করবে
+        checkReferral(); 
     }
 });
 
 window.startTask = async () => {
     if(!userActive) return alert("টাস্ক করতে একাউন্ট একটিভ করুন!");
     const today = new Date().toLocaleDateString();
-    if(lastTaskDate === today) return alert("আপনি আজকের টাস্ক ইতিপূর্বে সম্পন্ন করেছেন!");
+    if(lastTaskDate === today) return alert("আজকের টাস্ক শেষ!");
     window.open("https://www.facebook.com/facebookuser1972", "_blank");
-    alert("টাস্ক সম্পন্ন হচ্ছে... ৫ সেকেন্ড অপেক্ষা করুন।");
     setTimeout(async () => {
         await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10), lastTaskDate: today });
-        alert("অভিনন্দন! ১০ টাকা বোনাস পেয়েছেন।");
+        alert("১০ টাকা বোনাস পেয়েছেন!");
     }, 5000);
-};
-
-window.checkReferralAccess = () => {
-    if(!userActive) alert("রেফার লিঙ্ক পেতে আগে একাউন্ট একটিভ করুন!");
-    else showView('referView');
 };
 
 window.showView = (id) => {
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     toggleMenu(false);
-    if(id === 'historyView') loadHistory();
 };
 
 window.toggleMenu = (open) => {
@@ -259,43 +253,10 @@ window.toggleMenu = (open) => {
     else { s.classList.remove('active'); o.style.display = 'none'; }
 };
 
-window.updatePayNum = () => {
-    const m = document.getElementById('depMethod').value;
-    const p = document.getElementById('adminNum');
-    if(m === "Bkash") p.innerText = "বিকাশ: 01946024013";
-    else if(m === "Nagad") p.innerText = "নগদ: 018XXXXXXXX";
-    else p.innerText = "রকেট: 017XXXXXXXX";
-};
-
-async function loadHistory() {
-    const container = document.getElementById('historyContainer');
-    container.innerHTML = "লোডিং...";
-    const q1 = query(collection(db, "transactions"), where("uid", "==", auth.currentUser.uid));
-    const q2 = query(collection(db, "withdrawals"), where("uid", "==", auth.currentUser.uid));
-    const [depS, witS] = await Promise.all([getDocs(q1), getDocs(q2)]);
-    let html = "";
-    depS.forEach(d => { html += `<div class="card">📥 ডিপোজিট: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
-    witS.forEach(d => { html += `<div class="card">📤 উইথড্র: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
-    container.innerHTML = html || "কোনো তথ্য নেই।";
-}
-
-window.submitWithdraw = async () => {
-    const amt = Number(document.getElementById('witAmount').value);
-    const num = document.getElementById('witNumber').value;
-    if(amt < 500) return alert("মিনিমাম ৫০০৳");
-    if(amt > userBal) return alert("ব্যালেন্স নেই");
-    await addDoc(collection(db, "withdrawals"), { uid: auth.currentUser.uid, amount: amt, number: num, method: document.getElementById('witMethod').value, status: "pending", time: new Date() });
-    await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) });
-    alert("সফল হয়েছে!"); showView('homeView');
-};
-
 window.submitDeposit = async () => {
-    const a = document.getElementById('depAmount').value;
     const t = document.getElementById('depTrx').value.trim();
-    if(!a || !t) return alert("সব দিন");
-    const snap = await getDocs(query(collection(db, "transactions"), where("trxId", "==", t)));
-    if(!snap.empty) return alert("এই আইডি আগে ব্যবহৃত হয়েছে!");
-    await addDoc(collection(db, "transactions"), { uid: auth.currentUser.uid, amount: Number(a), trxId: t, status: "pending", time: new Date() });
+    if(!t) return alert("TrxID দিন");
+    await addDoc(collection(db, "transactions"), { uid: auth.currentUser.uid, amount: 100, trxId: t, status: "pending", time: new Date() });
     alert("সাবমিট হয়েছে!"); closeModal();
 };
 
@@ -307,14 +268,13 @@ window.handleSignUp = async () => {
     try {
         const res = await createUserWithEmailAndPassword(auth, e, p);
         await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name: n, email: e, balance: 0, active: false, referrer: r || null, lastTaskDate: "" });
-        alert("সফল!");
     } catch(e) { alert("ব্যর্থ!"); }
 };
 
 window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } catch(e) { alert("ব্যর্থ!"); } };
 window.handleLogout = () => signOut(auth);
-window.copyReferLink = () => { navigator.clipboard.writeText(document.getElementById('refLinkDisp').innerText); alert("লিঙ্ক কপি হয়েছে!"); };
-window.openModal = () => { document.getElementById('depositModal').style.display = 'flex'; toggleMenu(false); };
+window.copyReferLink = () => { navigator.clipboard.writeText(document.getElementById('refLinkDisp').innerText); alert("কপি হয়েছে!"); };
+window.openModal = () => { document.getElementById('depositModal').style.display = 'flex'; };
 window.closeModal = () => document.getElementById('depositModal').style.display = 'none';
 window.toggleAuth = (t) => { 
     document.getElementById('loginBox').style.display = t==='login'?'block':'none'; 

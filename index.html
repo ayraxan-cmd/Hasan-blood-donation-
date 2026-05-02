@@ -252,4 +252,53 @@
 
             if(!method) return alert("পেমেন্ট মেথড সিলেক্ট করুন");
             if(amount < 500) return alert("মিনিমাম ৫০০ টাকা উত্তোলন করতে হবে");
-            if(amount > currentBal) return alert("পর্যাপ্ত ব্যালেন্স নেই
+            if(amount > currentBal) return alert("পর্যাপ্ত ব্যালেন্স নেই");
+            if(!number) return alert("নাম্বার দিন");
+
+            try {
+                await addDoc(collection(db, "withdrawals"), {
+                    uid: auth.currentUser.uid,
+                    email: auth.currentUser.email,
+                    method: method,
+                    amount: amount,
+                    number: number,
+                    status: "pending",
+                    time: new Date().toLocaleString()
+                });
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amount) });
+                alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
+                showView('homeView');
+            } catch(e) { alert("Error updating withdraw"); }
+        };
+
+        // Task & Deposit
+        window.startTask = () => {
+            if(!taskLink) return alert("কাজ বর্তমানে বন্ধ আছে!");
+            window.open(taskLink, '_blank');
+            setTimeout(async () => {
+                if(confirm("কাজটি কি সঠিক ভাবে করেছেন? বোনাস নিতে OK চাপুন।")) {
+                    await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10) });
+                }
+            }, 5000);
+        };
+
+        window.submitDeposit = async () => {
+            const a = document.getElementById('depAmount').value;
+            const t = document.getElementById('depTrx').value;
+            if(!a || !t) return alert("তথ্য দিন");
+            await addDoc(collection(db, "transactions"), { uid: auth.currentUser.uid, amount: Number(a), trxId: t, status: "pending" });
+            alert("ডিপোজিট রিকোয়েস্ট সাবমিট হয়েছে");
+            closeModal();
+        };
+
+        // Modal Helpers
+        window.openModal = (id) => { document.getElementById('depositModal').style.display = 'flex'; toggleMenu(false); };
+        window.closeModal = () => document.getElementById('depositModal').style.display = 'none';
+        window.toggleAuth = (t) => {
+            document.getElementById('loginBox').style.display = t === 'login' ? 'block' : 'none';
+            document.getElementById('signupBox').style.display = t === 'signup' ? 'block' : 'none';
+        };
+    </script>
+</body>
+</html>
+

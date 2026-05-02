@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Invest Bd - Ultimate</title>
+<title>Smart Invest BD - Ultimate</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root { --primary-green: #22c55e; --bg-dark: #0f172a; --card-dark: #1e293b; --yellow: #facc15; --red-box: #ef4444; }
@@ -13,12 +13,10 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 .view-section { display: none; min-height: 100vh; width: 100%; overflow-y: auto; padding-bottom: 80px; }
 .view-section.active { display: block; animation: fadeIn 0.3s ease; }
 
-/* রেড বক্স টাইটেল */
 .navbar { background: var(--card-dark); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 1000; }
 .red-title { background: var(--red-box); padding: 5px 15px; border-radius: 8px; font-weight: 800; color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
 .menu-icon { font-size: 28px; color: var(--primary-green); cursor: pointer; }
 
-/* অ্যাক্টিভেশন ব্যানার */
 .activation-banner { background: var(--red-box); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: bold; animation: pulse 2s infinite; cursor: pointer; display: none; }
 
 .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-dark); z-index: 2005; transition: 0.4s; padding: 20px; }
@@ -78,7 +76,7 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <input type="text" id="signupName" placeholder="নাম">
 <input type="email" id="signupEmail" placeholder="ইমেল">
 <input type="password" id="signupPass" placeholder="পাসওয়ার্ড">
-<input type="text" id="signupRefer" placeholder="রেফার কোড (অপশনাল)">
+<input type="text" id="signupRefer" placeholder="রেফার কোড">
 </div>
 <button class="btn btn-green" onclick="handleSignUp()">সাইন আপ</button>
 <p style="margin-top:15px; color:#94a3b8; cursor:pointer;" onclick="toggleAuth('login')">লগইন করুন</p>
@@ -96,7 +94,6 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
     <div id="actBanner" class="activation-banner" onclick="openModal()">
         ⚠️ অ্যাকাউন্ট একটিভ করতে ১০০ টাকা ডিপোজিট করুন
     </div>
-
 <div class="welcome-banner">
 <h2 id="welcomeText">স্বাগতম!</h2>
 <p>নিরাপদ বিনিয়োগের বিশ্বস্ত মাধ্যম</p>
@@ -132,11 +129,11 @@ body { background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; }
 <table class="refer-table">
 <thead><tr><th>জেনারেশন</th><th>ইউজার</th><th>ইনকাম</th></tr></thead>
 <tbody>
-<tr><td>Level 1</td><td id="L1_count">0</td><td>৳15</td></tr>
-<tr><td>Level 2</td><td id="L2_count">0</td><td>৳10</td></tr>
-<tr><td>Level 3</td><td id="L3_count">0</td><td>৳5</td></tr>
-<tr><td>Level 4</td><td id="L4_count">0</td><td>৳2</td></tr>
-<tr><td>Level 5</td><td id="L5_count">0</td><td>৳1</td></tr>
+<tr><td>Level 1</td><td>-</td><td>৳15</td></tr>
+<tr><td>Level 2</td><td>-</td><td>৳10</td></tr>
+<tr><td>Level 3</td><td>-</td><td>৳5</td></tr>
+<tr><td>Level 4</td><td>-</td><td>৳2</td></tr>
+<tr><td>Level 5</td><td>-</td><td>৳1</td></tr>
 </tbody>
 </table>
 </div>
@@ -196,139 +193,133 @@ const db = getFirestore(app);
 
 let userBal = 0; let userActive = false; let lastTaskDate = "";
 
-onAuthStateChanged(auth, (user) => {
-if(user) {
-onSnapshot(doc(db, "users", user.uid), (s) => {
-if(s.exists()){
-const d = s.data();
-userBal = d.balance || 0; userActive = d.active || false; lastTaskDate = d.lastTaskDate || "";
-document.getElementById('userBalance').innerText = "৳ " + userBal;
-document.getElementById('profStatus').innerText = userActive ? "Active ✅" : "Inactive ❌";
-document.getElementById('actBanner').style.display = userActive ? "none" : "block";
-document.getElementById('welcomeText').innerText = "স্বাগতম, " + (d.name || "ইউজার");
-document.getElementById('witBalDisp').innerText = "৳ " + userBal;
-document.getElementById('profName').innerText = d.name;
-document.getElementById('profEmail').innerText = d.email;
-document.getElementById('profUid').innerText = user.uid;
-document.getElementById('refLinkDisp').innerText = window.location.href.split('?')[0] + "?ref=" + user.uid;
-if(document.getElementById('authView').classList.contains('active')) showView('homeView');
+// ইউআরএল থেকে রেফার কোড রিড করার ফাংশন
+function checkReferral() {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get('ref');
+    if (refCode) {
+        // যদি রেফার কোড থাকে, তবে সাইনআপ বক্স ওপেন হবে এবং কোড বসে যাবে
+        toggleAuth('signup');
+        document.getElementById('signupRefer').value = refCode;
+    }
 }
-});
-} else { showView('authView'); }
+
+onAuthStateChanged(auth, (user) => {
+    if(user) {
+        onSnapshot(doc(db, "users", user.uid), (s) => {
+            if(s.exists()){
+                const d = s.data();
+                userBal = d.balance || 0; userActive = d.active || false; lastTaskDate = d.lastTaskDate || "";
+                document.getElementById('userBalance').innerText = "৳ " + userBal;
+                document.getElementById('profStatus').innerText = userActive ? "Active ✅" : "Inactive ❌";
+                document.getElementById('actBanner').style.display = userActive ? "none" : "block";
+                document.getElementById('welcomeText').innerText = "স্বাগতম, " + (d.name || "ইউজার");
+                document.getElementById('witBalDisp').innerText = "৳ " + userBal;
+                document.getElementById('profName').innerText = d.name;
+                document.getElementById('profEmail').innerText = d.email;
+                document.getElementById('profUid').innerText = user.uid;
+                document.getElementById('refLinkDisp').innerText = window.location.origin + window.location.pathname + "?ref=" + user.uid;
+                if(document.getElementById('authView').classList.contains('active')) showView('homeView');
+            }
+        });
+    } else { 
+        showView('authView'); 
+        checkReferral(); // লগইন না থাকলে রেফার চেক করবে
+    }
 });
 
-// টাস্ক লজিক (আপনার দেওয়া ফেসবুক লিঙ্কসহ)
 window.startTask = async () => {
     if(!userActive) return alert("টাস্ক করতে একাউন্ট একটিভ করুন!");
-    
     const today = new Date().toLocaleDateString();
     if(lastTaskDate === today) return alert("আপনি আজকের টাস্ক ইতিপূর্বে সম্পন্ন করেছেন!");
-
-    // ফেসবুক পেজ ওপেন করা
     window.open("https://www.facebook.com/facebookuser1972", "_blank");
-
-    alert("টাস্ক সম্পন্ন হচ্ছে... ৫ সেকেন্ড পেজটি ভিজিট করুন।");
-    
+    alert("টাস্ক সম্পন্ন হচ্ছে... ৫ সেকেন্ড অপেক্ষা করুন।");
     setTimeout(async () => {
-        await updateDoc(doc(db, "users", auth.currentUser.uid), {
-            balance: increment(10),
-            lastTaskDate: today
-        });
-        alert("অভিনন্দন! ১০ টাকা বোনাস আপনার ব্যালেন্সে যোগ হয়েছে।");
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(10), lastTaskDate: today });
+        alert("অভিনন্দন! ১০ টাকা বোনাস পেয়েছেন।");
     }, 5000);
 };
 
-// রেফারেল এক্সেস চেক
 window.checkReferralAccess = () => {
-    if(!userActive) {
-        alert("রেফার লিঙ্ক পেতে আগে আপনার একাউন্ট ১০০ টাকা দিয়ে একটিভ করুন!");
-    } else {
-        showView('referView');
-    }
+    if(!userActive) alert("রেফার লিঙ্ক পেতে আগে একাউন্ট একটিভ করুন!");
+    else showView('referView');
 };
 
 window.showView = (id) => {
-document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-toggleMenu(false);
-if(id === 'historyView') loadHistory();
+    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    toggleMenu(false);
+    if(id === 'historyView') loadHistory();
 };
 
 window.toggleMenu = (open) => {
-const s = document.getElementById('sidebar');
-const o = document.getElementById('overlay');
-if(open) { s.classList.add('active'); o.style.display = 'block'; }
-else { s.classList.remove('active'); o.style.display = 'none'; }
+    const s = document.getElementById('sidebar');
+    const o = document.getElementById('overlay');
+    if(open) { s.classList.add('active'); o.style.display = 'block'; }
+    else { s.classList.remove('active'); o.style.display = 'none'; }
 };
 
 window.updatePayNum = () => {
-const m = document.getElementById('depMethod').value;
-const p = document.getElementById('adminNum');
-if(m === "Bkash") p.innerText = "বিকাশ: 01946024013";
-else if(m === "Nagad") p.innerText = "নগদ: 018XXXXXXXX";
-else p.innerText = "রকেট: 017XXXXXXXX";
+    const m = document.getElementById('depMethod').value;
+    const p = document.getElementById('adminNum');
+    if(m === "Bkash") p.innerText = "বিকাশ: 01946024013";
+    else if(m === "Nagad") p.innerText = "নগদ: 018XXXXXXXX";
+    else p.innerText = "রকেট: 017XXXXXXXX";
 };
 
 async function loadHistory() {
-const container = document.getElementById('historyContainer');
-container.innerHTML = "লোডিং...";
-const q1 = query(collection(db, "transactions"), where("uid", "==", auth.currentUser.uid));
-const q2 = query(collection(db, "withdrawals"), where("uid", "==", auth.currentUser.uid));
-const [depS, witS] = await Promise.all([getDocs(q1), getDocs(q2)]);
-let html = "";
-depS.forEach(d => { html += `<div class="card">📥 ডিপোজিট: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
-witS.forEach(d => { html += `<div class="card">📤 উইথড্র: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
-container.innerHTML = html || "কোনো তথ্য নেই।";
+    const container = document.getElementById('historyContainer');
+    container.innerHTML = "লোডিং...";
+    const q1 = query(collection(db, "transactions"), where("uid", "==", auth.currentUser.uid));
+    const q2 = query(collection(db, "withdrawals"), where("uid", "==", auth.currentUser.uid));
+    const [depS, witS] = await Promise.all([getDocs(q1), getDocs(q2)]);
+    let html = "";
+    depS.forEach(d => { html += `<div class="card">📥 ডিপোজিট: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
+    witS.forEach(d => { html += `<div class="card">📤 উইথড্র: ৳${d.data().amount} <span class="status-badge ${d.data().status}">${d.data().status}</span></div>`; });
+    container.innerHTML = html || "কোনো তথ্য নেই।";
 }
 
 window.submitWithdraw = async () => {
-const amt = Number(document.getElementById('witAmount').value);
-const num = document.getElementById('witNumber').value;
-if(amt < 500) return alert("মিনিমাম ৫০০৳");
-if(amt > userBal) return alert("ব্যালেন্স নেই");
-if(num.length < 11) return alert("সঠিক নাম্বার দিন");
-
-await addDoc(collection(db, "withdrawals"), {
-uid: auth.currentUser.uid, amount: amt, number: num, method: document.getElementById('witMethod').value,
-status: "pending", time: new Date()
-});
-await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) });
-alert("সফল হয়েছে!"); showView('homeView');
+    const amt = Number(document.getElementById('witAmount').value);
+    const num = document.getElementById('witNumber').value;
+    if(amt < 500) return alert("মিনিমাম ৫০০৳");
+    if(amt > userBal) return alert("ব্যালেন্স নেই");
+    await addDoc(collection(db, "withdrawals"), { uid: auth.currentUser.uid, amount: amt, number: num, method: document.getElementById('witMethod').value, status: "pending", time: new Date() });
+    await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) });
+    alert("সফল হয়েছে!"); showView('homeView');
 };
 
 window.submitDeposit = async () => {
-const a = document.getElementById('depAmount').value;
-const t = document.getElementById('depTrx').value.trim();
-if(!a || !t) return alert("সব তথ্য দিন");
-const snap = await getDocs(query(collection(db, "transactions"), where("trxId", "==", t)));
-if(!snap.empty) return alert("এই আইডি আগে ব্যবহৃত হয়েছে!");
-
-await addDoc(collection(db, "transactions"), {
-uid: auth.currentUser.uid, amount: Number(a), trxId: t, status: "pending", time: new Date()
-});
-alert("সাবমিট হয়েছে! অ্যাডমিন চেক করে ১-২৪ ঘণ্টার মধ্যে এক্টিভ করে দেবে।"); closeModal();
+    const a = document.getElementById('depAmount').value;
+    const t = document.getElementById('depTrx').value.trim();
+    if(!a || !t) return alert("সব দিন");
+    const snap = await getDocs(query(collection(db, "transactions"), where("trxId", "==", t)));
+    if(!snap.empty) return alert("এই আইডি আগে ব্যবহৃত হয়েছে!");
+    await addDoc(collection(db, "transactions"), { uid: auth.currentUser.uid, amount: Number(a), trxId: t, status: "pending", time: new Date() });
+    alert("সাবমিট হয়েছে!"); closeModal();
 };
 
 window.handleSignUp = async () => {
-const n = document.getElementById('signupName').value;
-const e = document.getElementById('signupEmail').value;
-const p = document.getElementById('signupPass').value;
-const r = document.getElementById('signupRefer').value;
-try {
-const res = await createUserWithEmailAndPassword(auth, e, p);
-await setDoc(doc(db, "users", res.user.uid), {
-uid: res.user.uid, name: n, email: e, balance: 0, active: false, referrer: r || null, lastTaskDate: ""
-});
-alert("রেজিস্ট্রেশন সফল!");
-} catch(e) { alert("রেজিস্ট্রেশন ব্যর্থ!"); }
+    const n = document.getElementById('signupName').value;
+    const e = document.getElementById('signupEmail').value;
+    const p = document.getElementById('signupPass').value;
+    const r = document.getElementById('signupRefer').value;
+    try {
+        const res = await createUserWithEmailAndPassword(auth, e, p);
+        await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name: n, email: e, balance: 0, active: false, referrer: r || null, lastTaskDate: "" });
+        alert("সফল!");
+    } catch(e) { alert("ব্যর্থ!"); }
 };
 
-window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } catch(e) { alert("লগইন ব্যর্থ!"); } };
+window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } catch(e) { alert("ব্যর্থ!"); } };
 window.handleLogout = () => signOut(auth);
 window.copyReferLink = () => { navigator.clipboard.writeText(document.getElementById('refLinkDisp').innerText); alert("লিঙ্ক কপি হয়েছে!"); };
 window.openModal = () => { document.getElementById('depositModal').style.display = 'flex'; toggleMenu(false); };
 window.closeModal = () => document.getElementById('depositModal').style.display = 'none';
-window.toggleAuth = (t) => { document.getElementById('loginBox').style.display = t==='login'?'block':'none'; document.getElementById('signupBox').style.display = t==='signup'?'block':'none'; };
+window.toggleAuth = (t) => { 
+    document.getElementById('loginBox').style.display = t==='login'?'block':'none'; 
+    document.getElementById('signupBox').style.display = t==='signup'?'block':'none'; 
+};
 </script>
 </body>
 </html>
